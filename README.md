@@ -28,6 +28,21 @@ Camera settings for the **Razer Kiyo Pro Ultra** on macOS — the controls Razer
 
 You need a Mac with macOS 15 (Sequoia) or newer and a Razer Kiyo Pro Ultra.
 
+### Easiest: one line
+
+1. Open **Terminal** (press ⌘ Space, type *Terminal*, press Return).
+2. Paste this line and press Return:
+
+   ```sh
+   curl -fsSL https://raw.githubusercontent.com/REPO_SLUG/main/scripts/install.sh | sh
+   ```
+
+3. Kiyo Control opens. When it asks for the camera, click **Allow**.
+
+Run the same line again later to update.
+
+### Or: download it yourself
+
 1. **Download.** Go to the [latest release](../../releases/latest) and click **KiyoControl-….zip**
    under *Assets*. It lands in your Downloads folder.
 2. **Unzip.** Double-click the zip. You now have **KiyoControl** (the icon with the green ring).
