@@ -7,9 +7,11 @@ fail() { echo "FAIL: $1"; FAIL=1; }
 
 FILES=$(git ls-files)
 
-# 1. Only our own binary files are allowed (the icons are drawn by scripts/make-icon.swift).
+# 1. Only our own binary files are allowed (the icons are drawn by scripts/make-icon.swift,
+#    the screenshot is of this app).
 ALLOWED_BINARIES="Resources/AppIcon.icns
-docs/icon.png"
+docs/icon.png
+docs/screenshot.png"
 for f in $FILES; do
     case "$f" in *.swift|*.c|*.h|*.sh|*.md|*.yml|*.json|.gitignore|LICENSE) continue ;; esac
     if [ -n "$(grep -Il . "$f" 2>/dev/null)" ]; then continue; fi  # text file
