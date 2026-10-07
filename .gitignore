@@ -1,0 +1,8 @@
+.build/
+build/
+.swiftpm/
+tools/uvc-dump
+tools/uvc-probe
+.DS_Store
+Resources/AppIcon.png
+.vscode/
