@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
 - HDR setting (On/Off) in the Processing tab, using the camera's backlight compensation. On hardware
   it lifts shadows (darkest quarter 84 → 136) while highlight clipping stays the same (4.8% → 5.0%).
@@ -23,5 +23,3 @@ First release.
 - Menu bar app with Launch at Login.
 - Zoom presets 1–5 per profile, also in the menu bar menu.
 - `kiyoctl` command-line tool.
-
-Not yet supported: HDR (command unknown).
