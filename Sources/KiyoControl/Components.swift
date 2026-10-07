@@ -14,10 +14,6 @@ enum Format {
     static func fov(_ zoom: Int) -> String { "\(Int(FieldOfView.degrees(zoom: zoom).rounded()))°" }
     static func degrees(_ v: Int) -> String { "\(v / 3600)°" }
     static func kelvin(_ v: Int) -> String { "\(v)K" }
-    /// Exposure time is in 100 µs units.
-    static func shutter(_ v: Int) -> String {
-        v >= 10_000 ? String(format: "%.1fS", Double(v) / 10_000) : "1/\(Int((10_000 / Double(max(v, 1))).rounded()))S"
-    }
 }
 
 /// Collapsible section header with an optional on/off switch and reset button, like Synapse.

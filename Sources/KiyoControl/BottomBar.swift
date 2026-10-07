@@ -30,7 +30,8 @@ struct BottomBar: View {
         if model.isAuto(K.autoExposure) {
             parts.append("AE")
         } else {
-            parts += ["GAIN \(model.value(K.gain))", "SS \(Format.shutter(model.value(K.exposureTime)))"]
+            if let iso = model.razer.iso { parts.append("ISO \(iso)") }
+            if let us = model.razer.shutterMicroseconds { parts.append("SS 1/\(1_000_000 / us)S") }
         }
         parts.append(model.isAuto(K.autoWhiteBalance) ? "AWB" : Format.kelvin(model.value(K.whiteBalance)))
         return parts.filter { !$0.isEmpty }.joined(separator: "   ")

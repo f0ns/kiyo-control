@@ -49,8 +49,9 @@ public enum KiyoProUltra {
         kind: .choice([0: "Off", 1: "50 Hz", 2: "60 Hz"]))
 
     /// All controls in a safe apply order: auto toggles come before the values they gate.
+    /// Gain and exposure time are left out: Razer's ISO and shutter commands replace them.
     public static let all: [UVCControl] = [
-        antiFlicker, autoExposure, exposureTime, gain, autoFocus, focus, zoom, pan, tilt,
+        antiFlicker, autoExposure, autoFocus, focus, zoom, pan, tilt,
         brightness, contrast, saturation, sharpness, autoWhiteBalance, whiteBalance, backlight,
     ]
 

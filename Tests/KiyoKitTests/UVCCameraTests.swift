@@ -43,14 +43,14 @@ typealias K = KiyoProUltra
     }
 
     @Test func applyWritesAutoToggleBeforeGatedValue() {
-        let ranges = ["exposureTime": UVCRange(min: 3, max: 2047, step: 1, defaultValue: 156)]
-        camera.apply(["exposureTime": 300, "autoExposure": 1], ranges: ranges)
-        #expect(fake.setLog == [fake.key(K.autoExposure), fake.key(K.exposureTime)])
+        let ranges = ["focus": UVCRange(min: 1, max: 450, step: 1, defaultValue: 1)]
+        camera.apply(["focus": 300, "autoFocus": 0], ranges: ranges)
+        #expect(fake.setLog == [fake.key(K.autoFocus), fake.key(K.focus)])
     }
 
     @Test func applySkipsGatedValueWhileAutoIsOn() {
-        camera.apply(["exposureTime": 300, "autoExposure": 8], ranges: [:])
-        #expect(fake.setLog == [fake.key(K.autoExposure)])
+        camera.apply(["focus": 300, "autoFocus": 1], ranges: [:])
+        #expect(fake.setLog == [fake.key(K.autoFocus)])
     }
 
     @Test func applyClampsToRange() throws {
@@ -68,7 +68,21 @@ typealias K = KiyoProUltra
     @Test func comparableValuesIgnoreAutoDrivenValues() {
         let a = ["autoExposure": 8, "exposureTime": 100, "zoom": 150]
         let b = ["autoExposure": 8, "exposureTime": 222, "zoom": 150]
-        #expect(comparableValues(a) == comparableValues(b))
-        #expect(comparableValues(a.merging(["autoExposure": 1]) { $1 }) != comparableValues(b.merging(["autoExposure": 1]) { $1 }))
+        let controls = [K.autoExposure, K.exposureTime, K.zoom]
+        #expect(comparableValues(a, controls: controls) == comparableValues(b, controls: controls))
+        #expect(comparableValues(a.merging(["autoExposure": 1]) { $1 }, controls: controls)
+            != comparableValues(b.merging(["autoExposure": 1]) { $1 }, controls: controls))
+    }
+
+    @Test func razerIsoAndShutterReplaceUVCGainAndExposureTime() {
+        // The UVC versions conflict with Razer's ISO/shutter commands, so profiles don't carry them.
+        #expect(!K.all.contains(K.gain))
+        #expect(!K.all.contains(K.exposureTime))
+    }
+
+    @Test func oldProfileValuesForRemovedControlsAreNotWritten() {
+        fake.stub(K.gain, cur: 0)
+        camera.apply(["gain": 50, "autoExposure": 1], ranges: [:])
+        #expect(!fake.setLog.contains(fake.key(K.gain)))
     }
 }
