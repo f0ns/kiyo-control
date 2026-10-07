@@ -8,6 +8,8 @@ public final class CameraController {
     public private(set) var savedValues: [String: Int] = [:]
     public private(set) var razer = RazerSettings()
     public private(set) var savedRazer = RazerSettings()
+    public private(set) var zoomPresets: [ZoomPreset?] = Array(repeating: nil, count: ZoomPreset.slots)
+    private var savedZoomPresets: [ZoomPreset?] = Array(repeating: nil, count: ZoomPreset.slots)
     public private(set) var activeProfile: String
     public private(set) var profileNames: [String] = []
     public private(set) var backups: [ProfileStore.Backup] = []
@@ -29,7 +31,7 @@ public final class CameraController {
 
     /// Unsaved changes, ignoring values the camera drives itself while in auto mode.
     public var isDirty: Bool {
-        razer != savedRazer || comparableValues(values, controls: controls) != comparableValues(savedValues, controls: controls)
+        razer != savedRazer || zoomPresets != savedZoomPresets || comparableValues(values, controls: controls) != comparableValues(savedValues, controls: controls)
     }
 
     private var manualExposure: Bool { values[KiyoProUltra.autoExposure.id] == 1 }
@@ -108,6 +110,20 @@ public final class CameraController {
         send(next.commands(manualExposure: manualExposure).filter { !before.contains($0) })
     }
 
+    /// Remembers the current zoom, pan and tilt in preset slot 0...4.
+    public func storeZoomPreset(_ slot: Int) {
+        guard zoomPresets.indices.contains(slot) else { return }
+        zoomPresets[slot] = ZoomPreset(zoom: value(KiyoProUltra.zoom), pan: value(KiyoProUltra.pan), tilt: value(KiyoProUltra.tilt))
+    }
+
+    /// Moves the camera to the view stored in a preset slot.
+    public func applyZoomPreset(_ slot: Int) {
+        guard zoomPresets.indices.contains(slot), let p = zoomPresets[slot] else { return }
+        set(KiyoProUltra.zoom, p.zoom)
+        set(KiyoProUltra.pan, p.pan)
+        set(KiyoProUltra.tilt, p.tilt)
+    }
+
     public func resetToDefault(_ list: [UVCControl]) {
         for c in list { if let d = ranges[c.id]?.defaultValue { set(c, d) } }
     }
@@ -116,14 +132,18 @@ public final class CameraController {
 
     public func save() {
         do {
-            try store.save(Profile(name: activeProfile, values: values, razer: razer))
+            try store.save(Profile(name: activeProfile, values: values, razer: razer, zoomPresets: zoomPresets))
             savedValues = values
             savedRazer = razer
+            savedZoomPresets = zoomPresets
             reloadLists()
         } catch { report(error, "Could not save profile") }
     }
 
-    public func revert() { apply(savedValues, razer: savedRazer) }
+    public func revert() {
+        zoomPresets = savedZoomPresets
+        apply(savedValues, razer: savedRazer)
+    }
 
     public func switchProfile(_ name: String) {
         guard let p = store.profile(named: name) else { return }
@@ -170,6 +190,8 @@ public final class CameraController {
     /// Applies a profile; what the camera ends up with becomes the saved baseline, so controls
     /// missing from older profiles don't count as unsaved changes.
     private func load(_ profile: Profile) {
+        zoomPresets = profile.zoomPresets
+        savedZoomPresets = profile.zoomPresets
         apply(profile.values, razer: profile.razer)
         savedValues = values
         savedRazer = razer

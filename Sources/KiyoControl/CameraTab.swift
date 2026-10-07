@@ -13,6 +13,7 @@ struct CameraTab: View {
             ControlSlider(model: model, control: K.zoom, format: { "\(Format.zoom($0)) · \(Format.fov($0))" })
             ControlSlider(model: model, control: K.pan, format: Format.degrees, minLabel: "LEFT", maxLabel: "RIGHT")
             ControlSlider(model: model, control: K.tilt, format: Format.degrees, minLabel: "DOWN", maxLabel: "UP")
+            zoomPresets
         }
         SettingsSection(title: "Field of View") {
             OptionButtons(title: nil,
@@ -40,6 +41,34 @@ struct CameraTab: View {
                 RazerOptions(model: model, title: "ISO", options: RazerCommand.isoSteps.map { ($0, "\($0)") }, keyPath: \.iso)
                 shutter
             }
+        }
+    }
+
+    private var zoomPresets: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Presets")
+            HStack(spacing: 8) {
+                ForEach(0..<ZoomPreset.slots, id: \.self) { slot in
+                    let preset = model.zoomPresets[slot]
+                    let active = preset.map { $0 == ZoomPreset(zoom: model.value(K.zoom), pan: model.value(K.pan),
+                                                               tilt: model.value(K.tilt)) } ?? false
+                    Button { model.applyZoomPreset(slot) } label: {
+                        Text("\(slot + 1)")
+                            .frame(maxWidth: .infinity, minHeight: 30)
+                            .foregroundStyle(preset == nil ? .tertiary : .primary)
+                            .overlay(RoundedRectangle(cornerRadius: 3)
+                                .stroke(active ? Color.accentGreen : .border, lineWidth: active ? 2 : 1))
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .help(preset.map { "\(Format.zoom($0.zoom)) · \(ZoomPresetHotKeys.label)\(slot + 1)" } ?? "Empty: right-click to store the current view")
+                    .contextMenu {
+                        Button("Store Current View in \(slot + 1)") { model.storeZoomPreset(slot) }
+                    }
+                }
+            }
+            Text("Right-click a number to store the current view. Shortcut: \(ZoomPresetHotKeys.label)1–5, from any app.")
+                .font(.caption).foregroundStyle(.secondary)
         }
     }
 

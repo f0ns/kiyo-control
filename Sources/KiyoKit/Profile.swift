@@ -1,16 +1,34 @@
 import Foundation
 
+/// A saved camera view for one of the zoom preset slots.
+public struct ZoomPreset: Codable, Equatable, Sendable {
+    public var zoom: Int
+    public var pan: Int
+    public var tilt: Int
+
+    public init(zoom: Int, pan: Int, tilt: Int) {
+        self.zoom = zoom
+        self.pan = pan
+        self.tilt = tilt
+    }
+
+    public static let slots = 5
+}
+
 /// A saved set of control values, keyed by control id.
 public struct Profile: Codable, Equatable, Sendable {
     public var name: String
     public var values: [String: Int]
     public var razer: RazerSettings
+    public var zoomPresets: [ZoomPreset?]
     public var savedAt: Date
 
-    public init(name: String, values: [String: Int], razer: RazerSettings = RazerSettings(), savedAt: Date = Date()) {
+    public init(name: String, values: [String: Int], razer: RazerSettings = RazerSettings(),
+                zoomPresets: [ZoomPreset?] = Array(repeating: nil, count: ZoomPreset.slots), savedAt: Date = Date()) {
         self.name = name
         self.values = values
         self.razer = razer
+        self.zoomPresets = zoomPresets
         self.savedAt = savedAt
     }
 
@@ -20,6 +38,8 @@ public struct Profile: Codable, Equatable, Sendable {
         values = try c.decode([String: Int].self, forKey: .values)
         // Profiles saved before Razer settings existed have no "razer" key.
         razer = try c.decodeIfPresent(RazerSettings.self, forKey: .razer) ?? RazerSettings()
+        let presets = try c.decodeIfPresent([ZoomPreset?].self, forKey: .zoomPresets) ?? []
+        zoomPresets = (0..<ZoomPreset.slots).map { $0 < presets.count ? presets[$0] : nil }
         savedAt = try c.decode(Date.self, forKey: .savedAt)
     }
 }

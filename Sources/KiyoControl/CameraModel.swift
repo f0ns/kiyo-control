@@ -9,6 +9,9 @@ final class CameraModel: ObservableObject {
 
     init() {
         poll()
+        ZoomPresetHotKeys.register { [weak self] slot in
+            MainActor.assumeIsolated { self?.applyZoomPreset(slot) }
+        }
         pollTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.poll() }
         }
@@ -56,4 +59,10 @@ extension CameraModel {
 extension CameraModel {
     var razer: RazerSettings { controller.razer }
     func setRazer(_ change: (inout RazerSettings) -> Void) { perform { $0.setRazer(change) } }
+}
+
+extension CameraModel {
+    var zoomPresets: [ZoomPreset?] { controller.zoomPresets }
+    func storeZoomPreset(_ slot: Int) { perform { $0.storeZoomPreset(slot) } }
+    func applyZoomPreset(_ slot: Int) { perform { $0.applyZoomPreset(slot) } }
 }
