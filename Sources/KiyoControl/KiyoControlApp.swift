@@ -36,12 +36,26 @@ struct KiyoControlApp: App {
         if ProcessInfo.processInfo.environment["KIYO_SELFTEST"] != nil {
             Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in MainActor.assumeIsolated {} }
         }
+        // KIYO_SNAPSHOT=<file.png> saves a picture of the window after launch and quits (for checking the UI).
+        if let path = ProcessInfo.processInfo.environment["KIYO_SNAPSHOT"] {
+            Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
+                MainActor.assumeIsolated {
+                    if let view = NSApp.windows.first(where: { $0.isVisible && $0.contentView != nil })?.contentView,
+                       let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) {
+                        view.cacheDisplay(in: view.bounds, to: rep)
+                        try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))
+                    }
+                    NSApp.terminate(nil)
+                }
+            }
+        }
     }
 
     var body: some Scene {
         Window("Kiyo Control", id: "main") {
             ContentView(model: model)
         }
+        .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentMinSize)
         .defaultLaunchBehavior(.suppressed)
 

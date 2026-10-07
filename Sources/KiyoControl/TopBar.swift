@@ -44,20 +44,19 @@ struct TopBar: View {
             .fixedSize()
 
             Spacer()
-            Picker("Tab", selection: $tab) {
-                ForEach(Tab.allCases, id: \.self) { Text($0.rawValue.uppercased()).tag($0) }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .frame(width: 330)
+            PillTabs(options: Tab.allCases.map { ($0, $0.rawValue) }, selection: $tab)
             Spacer()
 
-            Button("Reset All Settings") { confirmReset = true }
-                .buttonStyle(.link)
-                .disabled(!c.connected)
+            Button { confirmReset = true } label: {
+                Text("Reset All Settings").underline()
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(Color(white: 0.85))
+            .disabled(!c.connected)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
+        .background(Color.surface)
         .confirmationDialog("Reset all settings to the camera's factory defaults?", isPresented: $confirmReset) {
             Button("Reset All Settings", role: .destructive) { model.resetAll() }
         } message: {

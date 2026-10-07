@@ -9,19 +9,19 @@ struct BottomBar: View {
     var body: some View {
         HStack(spacing: 16) {
             Button("SAVE") { model.save() }
-                .buttonStyle(.borderedProminent)
-                .tint(.accentGreen)
+                .buttonStyle(GreenButtonStyle())
                 .disabled(!model.isDirty)
                 .keyboardShortcut("s")
             Button("Revert") { model.revert() }
                 .disabled(!model.isDirty)
                 .help("Go back to the last saved settings of this profile")
-            Text(summary).monospacedDigit().foregroundStyle(.secondary)
+            Text(summary.uppercased()).monospacedDigit().foregroundStyle(Color(white: 0.85))
             Spacer()
             Toggle("PREVIEW", isOn: $preview.enabled).toggleStyle(.switch).tint(.accentGreen)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
+        .background(Color.surface)
     }
 
     private var summary: String {

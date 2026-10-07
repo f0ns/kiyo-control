@@ -5,8 +5,54 @@ typealias K = KiyoProUltra
 
 extension Color {
     static let accentGreen = Color(red: 0.27, green: 0.84, blue: 0.17)
-    static let panel = Color(white: 0.09)
+    /// Title strip at the very top.
+    static let chrome = Color(white: 0.0)
+    /// Main window background.
+    static let surface = Color(white: 0.13)
+    /// Settings panel and cards.
+    static let panel = Color(white: 0.08)
     static let border = Color(white: 0.3)
+}
+
+/// Uppercase pill tabs; the selected one is filled green.
+struct PillTabs<T: Hashable>: View {
+    let options: [(T, String)]
+    @Binding var selection: T
+
+    var body: some View {
+        HStack(spacing: 6) {
+            ForEach(options, id: \.0) { value, label in
+                let selected = value == selection
+                Button { selection = value } label: {
+                    Text(label.uppercased())
+                        .font(.system(size: 13, weight: .medium))
+                        .tracking(0.6)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
+                        .foregroundStyle(selected ? Color.black : Color(white: 0.75))
+                        .background(Capsule().fill(selected ? Color.accentGreen : .clear))
+                        .contentShape(Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
+
+/// Solid green call-to-action button with dark text.
+struct GreenButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var enabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 13, weight: .semibold))
+            .tracking(0.6)
+            .foregroundStyle(enabled ? Color.black : Color(white: 0.45))
+            .padding(.horizontal, 28)
+            .padding(.vertical, 8)
+            .background(RoundedRectangle(cornerRadius: 3)
+                .fill(enabled ? Color.accentGreen.opacity(configuration.isPressed ? 0.75 : 1) : Color(white: 0.2)))
+    }
 }
 
 enum Format {

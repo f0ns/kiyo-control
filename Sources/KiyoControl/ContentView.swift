@@ -11,6 +11,12 @@ struct ContentView: View {
     var body: some View {
         let c = model.controller
         VStack(spacing: 0) {
+            Text("KIYO CONTROL")
+                .font(.system(size: 13, weight: .medium))
+                .tracking(1.2)
+                .foregroundStyle(Color(white: 0.75))
+                .frame(maxWidth: .infinity, minHeight: 38)
+                .background(Color.chrome)
             TopBar(model: model, tab: $tab)
             Divider()
             HStack(spacing: 0) {
@@ -54,7 +60,9 @@ struct ContentView: View {
             Divider()
             BottomBar(model: model, preview: preview)
         }
+        .background(Color.surface)
         .preferredColorScheme(.dark)
+        .ignoresSafeArea(edges: .top)
         .frame(minWidth: 1000, minHeight: 680)
         .onAppear { preview.start() }
         // Release the camera (and its light) when the window closes; the app stays in the menu bar.
