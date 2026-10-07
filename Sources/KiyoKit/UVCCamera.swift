@@ -1,4 +1,6 @@
-import CUVC
+import Foundation
+import IOKit
+import IOUSBHost
 
 public struct UVCError: Error, CustomStringConvertible {
     public let code: Int32
@@ -14,25 +16,43 @@ public protocol UVCTransport: AnyObject {
     func request(_ request: UVCRequest, unit: UInt8, selector: UInt8, data: inout [UInt8]) throws
 }
 
-/// UVC requests over the USB default pipe via IOKit, without claiming the device.
+/// UVC requests over the USB default pipe via Apple's IOUSBHost framework. Opens the device
+/// without capturing it, so other apps (and the system camera driver) keep streaming.
 public final class USBTransport: UVCTransport {
-    private let handle: OpaquePointer
+    private let device: IOUSBHostDevice
     private let interface: UInt8
 
     public init?(vendorID: UInt16, productID: UInt16, interface: UInt8) {
-        guard let h = cuvc_open(vendorID, productID) else { return nil }
-        handle = h
+        let matching = IOServiceMatching("IOUSBHostDevice") as NSMutableDictionary
+        matching["idVendor"] = Int(vendorID)
+        matching["idProduct"] = Int(productID)
+        let service = IOServiceGetMatchingService(kIOMainPortDefault, matching as CFDictionary)
+        guard service != 0 else { return nil }
+        defer { IOObjectRelease(service) }
+        guard let device = try? IOUSBHostDevice(__ioService: service, options: [], queue: nil, interestHandler: nil) else {
+            return nil
+        }
+        self.device = device
         self.interface = interface
     }
 
-    deinit { cuvc_close(handle) }
+    deinit { device.destroy() }
 
     public func request(_ request: UVCRequest, unit: UInt8, selector: UInt8, data: inout [UInt8]) throws {
-        var done: UInt16 = 0
-        let length = UInt16(data.count)
-        let rc = data.withUnsafeMutableBytes { cuvc_request(handle, request.rawValue, unit, selector, interface, $0.baseAddress, length, &done) }
-        guard rc == 0 else { throw UVCError(code: rc, context: "\(request) unit \(unit) selector \(selector)") }
-        if request != .setCur { data = Array(data.prefix(Int(done))) }
+        var r = IOUSBDeviceRequest()
+        r.bmRequestType = request == .setCur ? 0x21 : 0xA1  // class request to an interface, out / in
+        r.bRequest = request.rawValue
+        r.wValue = UInt16(selector) << 8
+        r.wIndex = UInt16(unit) << 8 | UInt16(interface)
+        r.wLength = UInt16(data.count)
+        let buffer = NSMutableData(bytes: data, length: data.count)
+        var done = 0
+        do {
+            try device.__send(r, data: buffer, bytesTransferred: &done, completionTimeout: 1.0)
+        } catch {
+            throw UVCError(code: Int32(truncatingIfNeeded: (error as NSError).code), context: "\(request) unit \(unit) selector \(selector)")
+        }
+        if request != .setCur { data = [UInt8](Data(referencing: buffer).prefix(done)) }
     }
 }
 

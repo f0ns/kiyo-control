@@ -113,7 +113,7 @@ are not kept by the camera across a replug; the app re-applies those from your p
 ## How it works
 
 The camera is a standard UVC device. Settings are UVC control requests sent over the USB default pipe
-via IOKit, without claiming the device. `tools/uvc-dump.c` and `tools/uvc-probe.c` are read-only
+via Apple's IOUSBHost framework, without claiming the device, so other apps keep streaming. `tools/uvc-dump.c` and `tools/uvc-probe.c` are read-only
 helpers that list the camera's descriptors and vendor extension unit controls.
 
 Razer-specific features are 8-byte commands sent to extension unit 6

@@ -10,8 +10,7 @@ let package = Package(
         .library(name: "KiyoKit", targets: ["KiyoKit"]),
     ],
     targets: [
-        .target(name: "CUVC", linkerSettings: [.linkedFramework("IOKit"), .linkedFramework("CoreFoundation")]),
-        .target(name: "KiyoKit", dependencies: ["CUVC"]),
+        .target(name: "KiyoKit", linkerSettings: [.linkedFramework("IOKit"), .linkedFramework("IOUSBHost")]),
         .executableTarget(name: "kiyoctl", dependencies: ["KiyoKit"]),
         .executableTarget(name: "KiyoControl", dependencies: ["KiyoKit"]),
         .testTarget(name: "KiyoKitTests", dependencies: ["KiyoKit"]),

@@ -40,7 +40,8 @@ final class FrameGrabber: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate
 }
 
 func snap(to path: String) throws {
-    let image = try FrameGrabber(skipFrames: 45).grab()
+    // ~3 s of frames, so auto exposure settles in low light too.
+    let image = try FrameGrabber(skipFrames: 90).grab()
     let scaled = image.transformed(by: CGAffineTransform(scaleX: 960 / image.extent.width, y: 960 / image.extent.width))
     try CIContext().writeJPEGRepresentation(of: scaled, to: URL(fileURLWithPath: path),
                                             colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!)

@@ -70,8 +70,8 @@ echo "Lens distortion compensation"
 isp ff 01 00 03; shot lens-off
 isp ff 01 01 03; shot lens-on
 isp ff 01 00 03
-d=$(field lens-off lens-on diff); n=$(field lens-off lens-off diff)
-check "lens correction" "diff off/on $d" "$d > 10"
+d=$(field lens-off lens-on diff)
+echo "INFO  lens correction  (diff off/on $d; only takes effect after save-to-camera and a replug)"
 
 echo "Autofocus options (reply only)"
 for cmd in "c0 0a 01 01" "c0 0a 01 00 00 00 00 01" "c0 0a 01 00" "ff 06 00" "ff 06 01"; do
