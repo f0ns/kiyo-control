@@ -1,8 +1,8 @@
 #!/bin/sh
 # Installs (or updates) Kiyo Control into /Applications from the latest GitHub release.
-# usage: curl -fsSL https://raw.githubusercontent.com/REPO_SLUG/main/scripts/install.sh | sh
+# usage: curl -fsSL https://raw.githubusercontent.com/f0ns/kiyo-control/main/scripts/install.sh | sh
 set -e
-REPO="${KIYO_REPO:-REPO_SLUG}"
+REPO="${KIYO_REPO:-f0ns/kiyo-control}"
 DEST="${KIYO_INSTALL_DIR:-/Applications}"
 TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
