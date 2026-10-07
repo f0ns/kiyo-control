@@ -1,6 +1,17 @@
-# Kiyo Control
+<p align="center">
+  <img src="docs/icon.png" width="128" alt="Kiyo Control icon">
+</p>
 
-Camera settings for the **Razer Kiyo Pro Ultra** on macOS — the controls Razer Synapse offers on Windows but not on Mac.
+<h1 align="center">Kiyo Control</h1>
+
+<p align="center">
+  Camera settings for the <b>Razer Kiyo Pro Ultra</b> on macOS — the controls Razer Synapse offers on Windows but not on Mac.
+</p>
+
+<p align="center">
+  <a href="#install"><b>Install</b></a> ·
+  <a href="https://www.paypal.com/donate/?hosted_button_id=CSFVGLP7FFYMU"><img src="https://img.shields.io/badge/Donate-PayPal-00457C?logo=paypal&logoColor=white" alt="Donate with PayPal" align="center"></a>
+</p>
 
 > **Unofficial.** Kiyo Control is an independent, community-made project. It is not affiliated with,
 > endorsed by, or supported by Razer Inc. See [Disclaimer](#disclaimer).
