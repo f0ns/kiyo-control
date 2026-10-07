@@ -19,7 +19,10 @@ struct BottomBar: View {
             Text(summary.uppercased()).monospacedDigit().foregroundStyle(Color(white: 0.85))
             Spacer()
             Link(destination: Links.donate) {
-                Label("Donate", systemImage: "heart.fill")
+                HStack(spacing: 4) {
+                    Image(systemName: "heart.fill")
+                    Text("Donate")
+                }
             }
             .foregroundStyle(Color(white: 0.7))
             .help("Kiyo Control is free. If it helps you, consider a donation.")
