@@ -11,7 +11,7 @@ FILES=$(git ls-files)
 #    the screenshot is of this app).
 ALLOWED_BINARIES="Resources/AppIcon.icns
 docs/icon.png
-docs/screenshot.png"
+docs/kiyo-control.png"
 for f in $FILES; do
     case "$f" in *.swift|*.c|*.h|*.sh|*.md|*.yml|*.json|.gitignore|LICENSE) continue ;; esac
     if [ -n "$(grep -Il . "$f" 2>/dev/null)" ]; then continue; fi  # text file

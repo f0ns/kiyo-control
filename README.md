@@ -17,7 +17,7 @@
 > endorsed by, or supported by Razer Inc. See [Disclaimer](#disclaimer).
 
 <p align="center">
-  <img src="docs/screenshot.png" width="800" alt="Kiyo Control window with camera settings on the left and a live preview on the right">
+  <img src="docs/kiyo-control.png" width="800" alt="Kiyo Control window with camera settings on the left and a live preview on the right">
 </p>
 
 ## Features
