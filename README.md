@@ -16,6 +16,10 @@
 > **Unofficial.** Kiyo Control is an independent, community-made project. It is not affiliated with,
 > endorsed by, or supported by Razer Inc. See [Disclaimer](#disclaimer).
 
+<p align="center">
+  <img src="docs/screenshot.png" width="800" alt="Kiyo Control window with camera settings on the left and a live preview on the right">
+</p>
+
 ## Features
 
 - Live preview while you adjust; nothing is stored in a profile until you press **Save** (⌘S).
