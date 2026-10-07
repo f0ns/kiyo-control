@@ -2,7 +2,8 @@
 
 Camera settings for the **Razer Kiyo Pro Ultra** on macOS — the controls Razer Synapse offers on Windows but not on Mac.
 
-Not affiliated with or endorsed by Razer. "Razer" and "Kiyo" are trademarks of Razer Inc.
+> **Unofficial.** Kiyo Control is an independent, community-made project. It is not affiliated with,
+> endorsed by, or supported by Razer Inc. See [Disclaimer](#disclaimer).
 
 ## Features
 
@@ -107,6 +108,29 @@ layouts come from USB captures of Synapse documented by the
 `scripts/hardware-test.sh` checks them on a real camera by comparing frames before and after each change.
 Never send guessed commands to that unit, and the app never sends the save-to-camera command.
 
+## Credits
+
+The Razer-specific command layouts were documented by
+[cameractrls](https://github.com/soyersoyer/cameractrls) contributors (issue #19) from USB captures.
+Kiyo Control uses those facts about the camera's protocol; it contains no code from cameractrls,
+Razer Synapse or any other Razer software.
+
+## Disclaimer
+
+- **No warranty, use at your own risk.** This software is provided "as is", without warranty of any
+  kind (see [LICENSE](LICENSE)). The authors are not liable for any damage to your camera, computer,
+  data or anything else, including from settings saved to the camera.
+- **Not affiliated with Razer.** Razer, Kiyo, Kiyo Pro Ultra and Synapse are trademarks or registered
+  trademarks of Razer Inc. The names are used only to describe which hardware this software works
+  with. This project is not affiliated with, endorsed by, sponsored by, or supported by Razer Inc.
+  For official support, use Razer's own software and support channels.
+- **Interoperability.** Kiyo Control talks to the camera through the standard USB Video Class
+  interface and documented vendor commands, solely to make the camera usable on macOS. It contains
+  no Razer firmware, software, code, images or other proprietary material; `scripts/legal-check.sh`
+  checks this on every change.
+- **Warranty of your device.** Changing camera settings with third-party software might affect
+  Razer's support or warranty. Check Razer's terms if that matters to you.
+
 ## License
 
-MIT
+MIT, see [LICENSE](LICENSE).

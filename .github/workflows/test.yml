@@ -9,6 +9,8 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+      - name: Legal check
+        run: scripts/legal-check.sh
       - name: Unit tests
         run: swift test
       - name: Build app bundle
