@@ -11,6 +11,8 @@ Not affiliated with or endorsed by Razer. "Razer" and "Kiyo" are trademarks of R
 - Automatic backups: the camera's state is saved when it connects and before every reset or restore
   (`~/Library/Application Support/KiyoControl/backups`, last 20 kept). Restore from the `…` menu.
 - Profiles, re-applied when the camera is plugged in and after the Mac wakes from sleep.
+- Runs from the menu bar, optionally at login, so profiles apply without opening the window.
+- Zoom presets 1–5 per profile, with system-wide shortcuts ⌃⌥1–5.
 - Works while other apps (Zoom, Meet, OBS…) use the camera.
 
 | Status | Settings |
@@ -20,9 +22,18 @@ Not affiliated with or endorsed by Razer. "Razer" and "Kiyo" are trademarks of R
 | Working (app) | Field of view presets Wide/Medium/Narrow (set the zoom; FOV in degrees is calculated from it) |
 | Not yet | HDR (command unknown), lens distortion compensation (needs a camera restart to apply) |
 
+## Install
+
+Download the zip from Releases, unzip, and move the app to Applications. The app isn't notarized
+by Apple, so the first time right-click it and choose **Open** (or run
+`xattr -d com.apple.quarantine /Applications/KiyoControl.app`).
+
+It lives in the menu bar: close the window and it keeps applying your profile whenever the camera
+connects. Turn on **Launch at Login** in its menu bar menu to have that after every restart.
+
 ## Build
 
-Requires macOS 14+ and Xcode.
+Requires macOS 15+ and Xcode.
 
 ```sh
 scripts/build-app.sh
@@ -36,7 +47,8 @@ swift test             # unit tests for KiyoKit (uses a fake camera, no hardware
 scripts/smoke.sh 4 25  # launches the app 4x25s with a self-test; fails on any crash (camera plugged in)
 ```
 
-The icon is drawn in code: `swift scripts/make-icon.swift Resources/AppIcon.icns`.
+`scripts/release.sh` builds a release zip (and signs/notarizes when `DEVELOPER_ID` and
+`NOTARY_PROFILE` are set). The icon is drawn in code: `swift scripts/make-icon.swift Resources/AppIcon.icns`.
 
 ## Command line
 
