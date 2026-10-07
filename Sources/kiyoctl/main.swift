@@ -9,6 +9,7 @@ usage: kiyoctl list                 show every control with current value and ra
        kiyoctl restore <file.json> apply a saved profile or backup
        kiyoctl isp <hex bytes>      send a known Razer setting command, print reply
        kiyoctl isp-read             print the ISP result register
+       kiyoctl save-to-camera --yes store ALL current settings in the camera's memory (as Synapse's Save)
        kiyoctl snap <file.jpg>      save one camera frame (960 px wide)
        kiyoctl stats <a.jpg> [b.jpg] brightness and noise of a; with b: difference, and difference to b mirrored
 """
@@ -84,6 +85,16 @@ case "isp" where args.count >= 2:
         let reply = try cam.raw(.getCur, unit: 6, selector: 2, length: 8)
         print("sent ", bytes.map { String(format: "%02x", $0) }.joined(separator: " "))
         print("reply", reply.map { String(format: "%02x", $0) }.joined(separator: " "))
+    } catch { fail("\(error)") }
+case "save-to-camera":
+    // Overwrites what the camera loads at power-up. Sends exactly what Synapse sends when saving.
+    guard args.dropFirst().contains("--yes") else { fail("this overwrites the camera's stored settings; add --yes") }
+    do {
+        for cmd: [UInt8] in [[0xC0, 0x09, 0x0A, 0, 0, 0, 0, 0], [0xC0, 0x03, 0xA8, 0, 0, 0, 0, 0]] {
+            try cam.rawSet(unit: 6, selector: 1, bytes: cmd)
+            print("sent ", cmd.map { String(format: "%02x", $0) }.joined(separator: " "),
+                  " reply", try cam.raw(.getCur, unit: 6, selector: 2, length: 8).map { String(format: "%02x", $0) }.joined(separator: " "))
+        }
     } catch { fail("\(error)") }
 case "snap" where args.count == 2:
     do { try snap(to: args[1]); print("saved \(args[1])") } catch { fail("\(error)") }

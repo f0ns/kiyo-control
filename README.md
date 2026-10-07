@@ -31,6 +31,17 @@ by Apple, so the first time right-click it and choose **Open** (or run
 It lives in the menu bar: close the window and it keeps applying your profile whenever the camera
 connects. Turn on **Launch at Login** in its menu bar menu to have that after every restart.
 
+## Troubleshooting
+
+- **"Kiyo Control can't be opened"**: the app isn't notarized. Right-click it › Open, once.
+- **No preview / "Camera access denied"**: allow it in System Settings › Privacy & Security › Camera.
+- **Settings reset after replugging**: the camera itself forgets most settings when it loses power.
+  Keep the app running (it lives in the menu bar) and it re-applies your profile automatically.
+- **Something looks wrong**: `…` menu › Restore Backup. A backup is made every time the camera
+  connects and before every reset or restore.
+
+The app talks only to the camera. It has no network access and collects nothing.
+
 ## Build
 
 Requires macOS 15+ and Xcode.
@@ -58,7 +69,11 @@ swift build --product kiyoctl
 .build/debug/kiyoctl set zoom 200       # 2.0x
 .build/debug/kiyoctl backup
 .build/debug/kiyoctl restore <backup.json>
+.build/debug/kiyoctl snap frame.jpg      # grab one frame
 ```
+
+`kiyoctl save-to-camera --yes` stores the current settings in the camera's memory like Synapse's
+Save button. The app never does this.
 
 ## How it works
 
