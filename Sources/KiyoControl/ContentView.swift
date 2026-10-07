@@ -4,7 +4,7 @@ import SwiftUI
 enum Tab: String, CaseIterable { case camera = "Camera", processing = "Processing", image = "Image" }
 
 struct ContentView: View {
-    @StateObject private var model = CameraModel()
+    @ObservedObject var model: CameraModel
     @StateObject private var preview = PreviewController()
     @State private var tab = Tab.camera
 
@@ -57,5 +57,7 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .frame(minWidth: 1000, minHeight: 680)
         .onAppear { preview.start() }
+        // Release the camera (and its light) when the window closes; the app stays in the menu bar.
+        .onDisappear { preview.stop() }
     }
 }

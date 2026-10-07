@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "KiyoControl",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS("15.0")],
     products: [
         .executable(name: "KiyoControl", targets: ["KiyoControl"]),
         .executable(name: "kiyoctl", targets: ["kiyoctl"]),
