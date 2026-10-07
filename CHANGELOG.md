@@ -9,7 +9,7 @@ First release.
 - Razer settings (verified on hardware): ISO, shutter speed, metering, exposure compensation,
   AF mode (Standard/Face), AF tracking, AF lighting, mirror, 2D/3D noise reduction,
   lens distortion compensation.
-- Save to Camera: stores the Razer settings in the camera's memory, like Synapse's Save.
+- SAVE also stores changed Razer settings in the camera's memory, like Synapse's Save.
 - Field of view presets (Wide/Medium/Narrow) and FOV in degrees, based on the zoom.
 - Live preview: changes apply immediately, profiles only change when you press Save.
 - Revert, Reset All Settings, and automatic backups before every reset or restore.

@@ -129,7 +129,7 @@ struct ProcessingTab: View {
         SettingsSection(title: "Lens Distortion Compensation") {
             RazerOptions(model: model, title: nil, options: [(false, "Off (82°)"), (true, "On (72°)")],
                          keyPath: \.lensCorrection)
-            Text("Straightens lines at the edges. Takes effect after ⋯ › Save to Camera and replugging the camera.")
+            Text("Straightens lines at the edges. Takes effect after SAVE and replugging the camera.")
                 .font(.caption).foregroundStyle(.secondary)
         }
         PendingFeature(title: "HDR", options: [(0, "Off"), (1, "On")])

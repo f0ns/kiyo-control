@@ -130,7 +130,10 @@ public final class CameraController {
 
     // MARK: Profiles
 
+    /// Saves the profile on the Mac. Changed Razer settings are also stored in the camera itself, so
+    /// they stick without the app; standard settings can't be, the app re-applies those on connect.
     public func save() {
+        if razer != savedRazer { saveToCamera() }
         do {
             try store.save(Profile(name: activeProfile, values: values, razer: razer, zoomPresets: zoomPresets))
             savedValues = values

@@ -12,6 +12,7 @@ struct BottomBar: View {
                 .buttonStyle(GreenButtonStyle())
                 .disabled(!model.isDirty)
                 .keyboardShortcut("s")
+                .help("Saves this profile. Razer settings are also stored in the camera, so they stick without the app.")
             Button("Revert") { model.revert() }
                 .disabled(!model.isDirty)
                 .help("Go back to the last saved settings of this profile")
