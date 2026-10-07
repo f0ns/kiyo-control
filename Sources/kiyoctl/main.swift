@@ -89,13 +89,7 @@ case "isp" where args.count >= 2:
 case "save-to-camera":
     // Overwrites what the camera loads at power-up. Sends exactly what Synapse sends when saving.
     guard args.dropFirst().contains("--yes") else { fail("this overwrites the camera's stored settings; add --yes") }
-    do {
-        for cmd: [UInt8] in [[0xC0, 0x09, 0x0A, 0, 0, 0, 0, 0], [0xC0, 0x03, 0xA8, 0, 0, 0, 0, 0]] {
-            try cam.rawSet(unit: 6, selector: 1, bytes: cmd)
-            print("sent ", cmd.map { String(format: "%02x", $0) }.joined(separator: " "),
-                  " reply", try cam.raw(.getCur, unit: 6, selector: 2, length: 8).map { String(format: "%02x", $0) }.joined(separator: " "))
-        }
-    } catch { fail("\(error)") }
+    do { try cam.saveToCamera(); print("saved to camera") } catch { fail("\(error)") }
 case "snap" where args.count == 2:
     do { try snap(to: args[1]); print("saved \(args[1])") } catch { fail("\(error)") }
 case "stats" where args.count == 2 || args.count == 3:

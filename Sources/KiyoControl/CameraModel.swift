@@ -66,3 +66,7 @@ extension CameraModel {
     func storeZoomPreset(_ slot: Int) { perform { $0.storeZoomPreset(slot) } }
     func applyZoomPreset(_ slot: Int) { perform { $0.applyZoomPreset(slot) } }
 }
+
+extension CameraModel {
+    func saveToCamera() { perform { $0.saveToCamera() } }
+}

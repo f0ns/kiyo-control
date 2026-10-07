@@ -126,11 +126,13 @@ struct ProcessingTab: View {
                 get: { model.value(K.backlight) != 0 }, set: { model.set(K.backlight, $0 ? 1 : 0) }))
             .toggleStyle(.switch).tint(.accentGreen)
         }
-        VStack(alignment: .leading, spacing: 14) {
-            PendingFeature(title: "HDR", options: [(0, "Off"), (1, "On")])
-            // The command is known (ff 01 0x 03) but only takes effect after the camera restarts.
-            PendingFeature(title: "Lens distortion compensation", options: [(0, "Off"), (1, "On")])
+        SettingsSection(title: "Lens Distortion Compensation") {
+            RazerOptions(model: model, title: nil, options: [(false, "Off (82°)"), (true, "On (72°)")],
+                         keyPath: \.lensCorrection)
+            Text("Straightens lines at the edges. Takes effect after ⋯ › Save to Camera and replugging the camera.")
+                .font(.caption).foregroundStyle(.secondary)
         }
-        .padding(.vertical, 14)
+        PendingFeature(title: "HDR", options: [(0, "Off"), (1, "On")])
+            .padding(.vertical, 14)
     }
 }

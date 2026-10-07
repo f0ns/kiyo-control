@@ -167,6 +167,13 @@ public final class CameraController {
         if let next = profileNames.first(where: { $0 != activeProfile }) { switchProfile(next) }
     }
 
+    /// Stores the current settings in the camera's own memory, after backing them up.
+    public func saveToCamera() {
+        guard let camera else { return }
+        backupCurrent("before-save-to-camera")
+        do { try camera.saveToCamera() } catch { report(error, "Could not save to the camera") }
+    }
+
     // MARK: Backups
 
     public func resetAll() {

@@ -2,7 +2,7 @@
 /// extension unit 6 (GUID 23e49ed0-1178-4f31-ae52-d2fb8a8d3b48). Byte layouts come from USB captures
 /// of Synapse, documented in https://github.com/soyersoyer/cameractrls/issues/19.
 ///
-/// The NVRAM save command (c0 03 a8) is deliberately not exposed.
+/// Saving to the camera's memory (`saveToCamera`) is kept separate from the setting commands.
 public enum RazerCommand {
     public static let unit: UInt8 = 6
     public static let commandSelector: UInt8 = 1
@@ -52,6 +52,13 @@ public enum RazerCommand {
 }
 
 extension UVCCamera {
+    /// Stores the camera's current settings in its memory, like Synapse's Save: the camera loads them
+    /// at power-up, also on other computers. Sends exactly what Synapse sends.
+    public func saveToCamera() throws {
+        try send([0xC0, 0x09, 0x0A, 0, 0, 0, 0, 0])
+        try send([0xC0, 0x03, 0xA8, 0, 0, 0, 0, 0])
+    }
+
     /// Sends a Razer command and returns the camera's reply from the result register.
     @discardableResult
     public func send(_ command: [UInt8]) throws -> [UInt8] {

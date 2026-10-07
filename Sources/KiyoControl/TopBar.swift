@@ -6,6 +6,7 @@ struct TopBar: View {
     @ObservedObject var model: CameraModel
     @Binding var tab: Tab
     @State private var confirmReset = false
+    @State private var confirmCameraSave = false
     @State private var newProfileName = ""
     @State private var askingName = false
     @State private var pendingProfile: String?
@@ -25,6 +26,9 @@ struct TopBar: View {
                 Button("New Profile…") { newProfileName = ""; askingName = true }
                 Button("Delete Profile", role: .destructive) { model.deleteActiveProfile() }
                     .disabled(c.profileNames.count < 2)
+                Divider()
+                Button("Save to Camera…") { confirmCameraSave = true }
+                    .disabled(!c.connected)
                 Divider()
                 Menu("Restore Backup") {
                     ForEach(c.backups) { b in
@@ -58,6 +62,11 @@ struct TopBar: View {
             Button("Reset All Settings", role: .destructive) { model.resetAll() }
         } message: {
             Text("A backup of the current settings is saved first, so you can restore it.")
+        }
+        .confirmationDialog("Save the Razer settings in the camera?", isPresented: $confirmCameraSave) {
+            Button("Save to Camera") { model.saveToCamera() }
+        } message: {
+            Text("The camera then starts with these Razer settings (ISO, metering, focus, mirror, noise reduction, lens correction), also on other computers, like Synapse's Save. Standard settings such as zoom and brightness are not kept by the camera; Kiyo Control re-applies those from your profile.")
         }
         .confirmationDialog("Discard unsaved changes?",
                             isPresented: Binding(get: { pendingProfile != nil }, set: { if !$0 { pendingProfile = nil } })) {

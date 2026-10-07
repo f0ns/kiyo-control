@@ -10,6 +10,7 @@ Not affiliated with or endorsed by Razer. "Razer" and "Kiyo" are trademarks of R
 - **Revert** to the last saved settings, **Reset All Settings** to factory defaults.
 - Automatic backups: the camera's state is saved when it connects and before every reset or restore
   (`~/Library/Application Support/KiyoControl/backups`, last 20 kept). Restore from the `…` menu.
+- **Save to Camera** keeps the Razer settings in the camera's memory, also on other computers.
 - Profiles, re-applied when the camera is plugged in and after the Mac wakes from sleep.
 - Runs from the menu bar, optionally at login, so profiles apply without opening the window.
 - Zoom presets 1–5 per profile, with system-wide shortcuts ⌃⌥1–5.
@@ -18,9 +19,9 @@ Not affiliated with or endorsed by Razer. "Razer" and "Kiyo" are trademarks of R
 | Status | Settings |
 |---|---|
 | Working | Zoom, pan, tilt, auto/manual focus, auto exposure, white balance, brightness, contrast, saturation, sharpness, anti-flicker, backlight compensation |
-| Working (Razer commands) | ISO, shutter speed, metering, exposure compensation, AF mode (Standard/Face), AF tracking, AF lighting, mirror, 2D/3D noise reduction |
+| Working (Razer commands) | ISO, shutter speed, metering, exposure compensation, AF mode (Standard/Face), AF tracking, AF lighting, mirror, 2D/3D noise reduction, lens distortion compensation (after Save to Camera + replug) |
 | Working (app) | Field of view presets Wide/Medium/Narrow (set the zoom; FOV in degrees is calculated from it) |
-| Not yet | HDR (command unknown), lens distortion compensation (needs a camera restart to apply) |
+| Not yet | HDR (command unknown) |
 
 ## Install
 
@@ -50,6 +51,8 @@ That's it. Plug in the camera and the settings appear.
 - Closing the window keeps KiyoControl running in the **menu bar** (the camera icon at the top of
   the screen), so your settings come back whenever you plug the camera in.
 - Want it to start automatically? Click the menu bar icon and turn on **Launch at Login**.
+- Want the Razer settings to stick in the camera itself (e.g. for another computer)?
+  **⋯** › **Save to Camera…**
 - Made a mess? Click **Reset All Settings**, or the **⋯** button › **Restore Backup**.
 
 ### Uninstall
@@ -87,8 +90,9 @@ swift build --product kiyoctl
 .build/debug/kiyoctl snap frame.jpg      # grab one frame
 ```
 
-`kiyoctl save-to-camera --yes` stores the current settings in the camera's memory like Synapse's
-Save button. The app never does this.
+`kiyoctl save-to-camera --yes` stores the current Razer settings in the camera's memory, like
+Synapse's Save button (the app's `⋯` › Save to Camera). Standard UVC settings (zoom, brightness…)
+are not kept by the camera across a replug; the app re-applies those from your profile.
 
 ## How it works
 
