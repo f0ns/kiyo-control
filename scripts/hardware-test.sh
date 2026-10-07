@@ -73,6 +73,13 @@ isp ff 01 00 03
 d=$(field lens-off lens-on diff)
 echo "INFO  lens correction  (diff off/on $d; only takes effect after save-to-camera and a replug)"
 
+echo "HDR (backlight compensation, auto exposure)"
+$K set backlight 0 >/dev/null; sleep 1; shot hdr-off
+$K set backlight 1 >/dev/null; sleep 2; shot hdr-on
+$K set backlight 0 >/dev/null
+a=$(field hdr-off hdr-on brightness); b=$(field hdr-on hdr-off brightness)
+check "HDR" "brightness off $a, on $b" "$b > $a + 10"
+
 echo "Autofocus options (reply only)"
 for cmd in "c0 0a 01 01" "c0 0a 01 00 00 00 00 01" "c0 0a 01 00" "ff 06 00" "ff 06 01"; do
     echo "INFO  $cmd -> $($K isp $cmd | awk '/reply/ { $1 = ""; print }')"

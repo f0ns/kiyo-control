@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- HDR setting (On/Off) in the Processing tab, using the camera's backlight compensation. On hardware
+  it lifts shadows (darkest quarter 84 → 136) while highlight clipping stays the same (4.8% → 5.0%).
+  Replaces the separate "Backlight compensation" switch.
+
 ## 0.1.0
 
 First release.

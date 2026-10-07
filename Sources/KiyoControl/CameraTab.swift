@@ -121,10 +121,12 @@ struct ProcessingTab: View {
             RazerOptions(model: model, title: "2D (within a frame)", options: [(false, "Off"), (true, "On")],
                          keyPath: \.noiseReduction2D)
         }
-        SettingsSection(title: "Low Light") {
-            Toggle("Backlight compensation", isOn: Binding(
-                get: { model.value(K.backlight) != 0 }, set: { model.set(K.backlight, $0 ? 1 : 0) }))
-            .toggleStyle(.switch).tint(.accentGreen)
+        SettingsSection(title: "HDR") {
+            OptionButtons(title: nil, options: [(0, "Off"), (1, "On")], selection: model.value(K.backlight)) {
+                model.set(K.backlight, $0)
+            }
+            Text("Brightens shadows without blowing out highlights, using the camera's backlight compensation.")
+                .font(.caption).foregroundStyle(.secondary)
         }
         SettingsSection(title: "Lens Distortion Compensation") {
             RazerOptions(model: model, title: nil, options: [(false, "Off (82°)"), (true, "On (72°)")],
@@ -132,7 +134,5 @@ struct ProcessingTab: View {
             Text("Straightens lines at the edges. Takes effect after SAVE and replugging the camera.")
                 .font(.caption).foregroundStyle(.secondary)
         }
-        PendingFeature(title: "HDR", options: [(0, "Off"), (1, "On")])
-            .padding(.vertical, 14)
     }
 }

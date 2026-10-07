@@ -30,10 +30,10 @@
 
 | Status | Settings |
 |---|---|
-| Working | Zoom, pan, tilt, auto/manual focus, auto exposure, white balance, brightness, contrast, saturation, sharpness, anti-flicker, backlight compensation |
+| Working | Zoom, pan, tilt, auto/manual focus, auto exposure, white balance, brightness, contrast, saturation, sharpness, anti-flicker, HDR (backlight compensation) |
 | Working (Razer commands) | ISO, shutter speed, metering, exposure compensation, AF mode (Standard/Face), AF tracking, AF lighting, mirror, 2D/3D noise reduction, lens distortion compensation (after SAVE + replug) |
 | Working (app) | Field of view presets Wide/Medium/Narrow (set the zoom; FOV in degrees is calculated from it) |
-| Not yet | HDR (command unknown) |
+| Unconfirmed | HDR uses the camera's backlight compensation: shadows come up, highlights stay. Whether Synapse's HDR sends a different Razer command is unknown; the Dell UltraSharp HDR command (`ff 11`) is rejected. |
 
 ## Install
 

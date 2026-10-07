@@ -180,18 +180,3 @@ struct RazerOptions<Value: Hashable>: View {
         }
     }
 }
-
-/// A Synapse feature that needs Razer's vendor protocol (Phase 2). Shown, but not usable yet.
-struct PendingFeature<Value: Hashable>: View {
-    let title: String
-    let options: [(Value, String)]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            OptionButtons(title: title, options: options, selection: nil)
-                .disabled(true)
-                .opacity(0.35)
-            Text("Not supported yet").font(.caption2).foregroundStyle(.tertiary)
-        }
-    }
-}
