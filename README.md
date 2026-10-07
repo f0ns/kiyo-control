@@ -123,6 +123,12 @@ layouts come from USB captures of Synapse documented by the
 `scripts/hardware-test.sh` checks them on a real camera by comparing frames before and after each change.
 Never send guessed commands to that unit, and the app never sends the save-to-camera command.
 
+## Support
+
+Kiyo Control is free and open source. If it saves you from booting Windows, you can
+[buy me a coffee via PayPal](https://www.paypal.com/donate/?hosted_button_id=CSFVGLP7FFYMU) ☕
+(also the **♥ Donate** link in the app).
+
 ## Credits
 
 The Razer-specific command layouts were documented by

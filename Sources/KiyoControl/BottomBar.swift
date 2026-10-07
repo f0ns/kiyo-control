@@ -17,6 +17,11 @@ struct BottomBar: View {
                 .help("Go back to the last saved settings of this profile")
             Text(summary.uppercased()).monospacedDigit().foregroundStyle(Color(white: 0.85))
             Spacer()
+            Link(destination: Links.donate) {
+                Label("Donate", systemImage: "heart.fill")
+            }
+            .foregroundStyle(Color(white: 0.7))
+            .help("Kiyo Control is free. If it helps you, consider a donation.")
             Toggle("PREVIEW", isOn: $preview.enabled).toggleStyle(.switch).tint(.accentGreen)
         }
         .padding(.horizontal, 16)

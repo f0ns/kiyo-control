@@ -115,6 +115,7 @@ struct MenuBarMenu: View {
             openWindow(id: "main")
             NSApp.activate()
         }
+        Link("Donate…", destination: Links.donate)
         Toggle("Launch at Login", isOn: Binding(get: { LaunchAtLogin.isEnabled }, set: { LaunchAtLogin.isEnabled = $0 }))
         Divider()
         Button("Quit Kiyo Control") { NSApp.terminate(nil) }

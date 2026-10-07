@@ -3,6 +3,10 @@ import SwiftUI
 
 typealias K = KiyoProUltra
 
+enum Links {
+    static let donate = URL(string: "https://www.paypal.com/donate/?hosted_button_id=CSFVGLP7FFYMU")!
+}
+
 extension Color {
     static let accentGreen = Color(red: 0.27, green: 0.84, blue: 0.17)
     /// Title strip at the very top.
