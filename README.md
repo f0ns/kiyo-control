@@ -24,23 +24,38 @@ Not affiliated with or endorsed by Razer. "Razer" and "Kiyo" are trademarks of R
 
 ## Install
 
-Download the zip from Releases, unzip, and move the app to Applications. The app isn't notarized
-by Apple, so the first time right-click it and choose **Open** (or run
-`xattr -d com.apple.quarantine /Applications/KiyoControl.app`).
+You need a Mac with macOS 15 (Sequoia) or newer and a Razer Kiyo Pro Ultra.
 
-It lives in the menu bar: close the window and it keeps applying your profile whenever the camera
-connects. Turn on **Launch at Login** in its menu bar menu to have that after every restart.
+1. **Download.** Go to the [latest release](../../releases/latest) and click **KiyoControl-….zip**
+   under *Assets*. It lands in your Downloads folder.
+2. **Unzip.** Double-click the zip. You now have **KiyoControl** (the icon with the green ring).
+3. **Move it to Applications.** Drag KiyoControl into the **Applications** folder in Finder's sidebar.
+4. **Open it the first time.** Double-click KiyoControl in Applications. macOS will say it
+   *"cannot verify"* the app, because it's a free app that isn't registered with Apple. That's expected:
+   - Click **Done** (not *Move to Trash*).
+   - Open  › **System Settings** › **Privacy & Security**.
+   - Scroll down to the message about KiyoControl and click **Open Anyway**, then enter your password.
+   - Click **Open Anyway** once more in the window that appears.
 
-## Troubleshooting
+   You only have to do this once.
+5. **Allow the camera.** When asked *"KiyoControl would like to access the camera"*, click **Allow**.
+   This is for the live preview.
 
-- **"Kiyo Control can't be opened"**: the app isn't notarized. Right-click it › Open, once.
-- **No preview / "Camera access denied"**: allow it in System Settings › Privacy & Security › Camera.
-- **Settings reset after replugging**: the camera itself forgets most settings when it loses power.
-  Keep the app running (it lives in the menu bar) and it re-applies your profile automatically.
-- **Something looks wrong**: `…` menu › Restore Backup. A backup is made every time the camera
-  connects and before every reset or restore.
+That's it. Plug in the camera and the settings appear.
 
-The app talks only to the camera. It has no network access and collects nothing.
+### Everyday use
+
+- Change settings and watch the preview. Nothing is kept until you click **SAVE**; **Revert**
+  undoes your changes.
+- Closing the window keeps KiyoControl running in the **menu bar** (the camera icon at the top of
+  the screen), so your settings come back whenever you plug the camera in.
+- Want it to start automatically? Click the menu bar icon and turn on **Launch at Login**.
+- Made a mess? Click **Reset All Settings**, or the **⋯** button › **Restore Backup**.
+
+### Uninstall
+
+Click the menu bar icon › **Quit**, then drag KiyoControl from Applications to the Trash.
+To also remove your profiles, delete the folder `~/Library/Application Support/KiyoControl`.
 
 ## Build
 
