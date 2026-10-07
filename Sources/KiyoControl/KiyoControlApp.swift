@@ -101,6 +101,15 @@ struct MenuBarMenu: View {
         ForEach(c.profileNames, id: \.self) { name in
             Toggle(name, isOn: Binding(get: { c.activeProfile == name }, set: { if $0 { model.switchProfile(name) } }))
         }
+        if c.connected, model.zoomPresets.contains(where: { $0 != nil }) {
+            Divider()
+            Text("Zoom Presets")
+            ForEach(0..<ZoomPreset.slots, id: \.self) { slot in
+                if let preset = model.zoomPresets[slot] {
+                    Button("\(slot + 1) · \(Format.zoom(preset.zoom)) · \(Format.fov(preset.zoom))") { model.applyZoomPreset(slot) }
+                }
+            }
+        }
         Divider()
         Button("Open Kiyo Control…") {
             openWindow(id: "main")

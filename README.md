@@ -14,7 +14,7 @@ Camera settings for the **Razer Kiyo Pro Ultra** on macOS — the controls Razer
 - **Save to Camera** keeps the Razer settings in the camera's memory, also on other computers.
 - Profiles, re-applied when the camera is plugged in and after the Mac wakes from sleep.
 - Runs from the menu bar, optionally at login, so profiles apply without opening the window.
-- Zoom presets 1–5 per profile, with system-wide shortcuts ⌃⌥1–5.
+- Zoom presets 1–5 per profile, also one click away in the menu bar menu.
 - Works while other apps (Zoom, Meet, OBS…) use the camera.
 
 | Status | Settings |

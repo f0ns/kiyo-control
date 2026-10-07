@@ -61,13 +61,13 @@ struct CameraTab: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .help(preset.map { "\(Format.zoom($0.zoom)) · \(ZoomPresetHotKeys.label)\(slot + 1)" } ?? "Empty: right-click to store the current view")
+                    .help(preset.map { Format.zoom($0.zoom) } ?? "Empty: right-click to store the current view")
                     .contextMenu {
                         Button("Store Current View in \(slot + 1)") { model.storeZoomPreset(slot) }
                     }
                 }
             }
-            Text("Right-click a number to store the current view. Shortcut: \(ZoomPresetHotKeys.label)1–5, from any app.")
+            Text("Right-click a number to store the current view. Also in the menu bar menu.")
                 .font(.caption).foregroundStyle(.secondary)
         }
     }

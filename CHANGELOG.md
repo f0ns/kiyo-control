@@ -15,7 +15,7 @@ First release.
 - Revert, Reset All Settings, and automatic backups before every reset or restore.
 - Profiles, re-applied when the camera connects and after the Mac wakes.
 - Menu bar app with Launch at Login.
-- Zoom presets 1–5 per profile with system-wide shortcuts ⌃⌥1–5.
+- Zoom presets 1–5 per profile, also in the menu bar menu.
 - `kiyoctl` command-line tool.
 
 Not yet supported: HDR (command unknown).

@@ -9,9 +9,6 @@ final class CameraModel: ObservableObject {
 
     init() {
         poll()
-        ZoomPresetHotKeys.register { [weak self] slot in
-            MainActor.assumeIsolated { self?.applyZoomPreset(slot) }
-        }
         pollTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.poll() }
         }
