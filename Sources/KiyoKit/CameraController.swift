@@ -72,7 +72,7 @@ public final class CameraController {
         connected = true
         let current = cam.snapshot(controls)
         // Always keep the camera's state from before we touch anything.
-        _ = try? store.backup(current, razer: razer, reason: "on-connect")
+        _ = try? store.backup(current, razer: razer, reason: ProfileStore.connectReason)
 
         if let profile = store.profile(named: activeProfile) {
             load(profile)
@@ -154,7 +154,9 @@ public final class CameraController {
 
     public func createProfile(_ name: String) {
         let name = name.trimmingCharacters(in: .whitespaces)
-        guard !name.isEmpty, !profileNames.contains(name) else { return }
+        // Refuse names that would land on an existing file (macOS disks ignore case; "/" maps to "-").
+        guard !name.isEmpty, store.profile(named: name) == nil,
+              !profileNames.contains(where: { $0.caseInsensitiveCompare(name) == .orderedSame }) else { return }
         activeProfile = name
         store.activeProfileName = name
         save()

@@ -60,13 +60,28 @@ public final class ProfileStore {
         public var id: URL { url }
     }
 
-    /// Stores a timestamped snapshot and prunes the oldest beyond `maxBackups`.
+    public static let connectReason = "on-connect"
+
+    /// Stores a timestamped snapshot. Connect backups identical to the previous one are skipped, and
+    /// connect backups are pruned separately so frequent replugs never push out other backups.
     @discardableResult
     public func backup(_ values: [String: Int], razer: RazerSettings = RazerSettings(), reason: String) throws -> URL {
+        let existing = backups()
+        if reason == Self.connectReason,
+           let last = existing.first(where: { $0.profile.name == reason }),
+           last.profile.values == values, last.profile.razer == razer {
+            return last.url
+        }
         let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(of: ":", with: "-")
-        let url = backupsDir.appending(path: "\(stamp) \(reason).json")
+        let url = backupsDir.appending(path: "\(stamp) \(reason) \(UUID().uuidString.prefix(6)).json")
         try write(Profile(name: reason, values: values, razer: razer), to: url)
-        for old in backups().dropFirst(maxBackups) { try? FileManager.default.removeItem(at: old.url) }
+
+        let all = backups()
+        let connects = all.filter { $0.profile.name == Self.connectReason }
+        let others = all.filter { $0.profile.name != Self.connectReason }
+        for old in connects.dropFirst(maxBackups) + others.dropFirst(maxBackups) {
+            try? FileManager.default.removeItem(at: old.url)
+        }
         return url
     }
 

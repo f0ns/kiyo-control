@@ -32,7 +32,12 @@ final class CameraModel: ObservableObject {
         return action(controller)
     }
 
-    func poll() { perform { $0.poll() } }
+    /// Redraws only when the connection changes, not on every 2-second check.
+    func poll() {
+        let wasConnected = controller.connected
+        controller.poll()
+        if controller.connected != wasConnected { objectWillChange.send() }
+    }
 }
 
 extension CameraModel {

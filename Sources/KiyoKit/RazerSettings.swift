@@ -38,7 +38,11 @@ public struct RazerSettings: Codable, Equatable, Sendable {
         if let noiseReduction3D { out.append(RazerCommand.noiseReduction3D(noiseReduction3D)) }
         if let noiseReduction2D { out.append(RazerCommand.noiseReduction2D(noiseReduction2D)) }
         if let metering { out.append(RazerCommand.metering(metering)) }
-        if let exposureCompensation { out.append(RazerCommand.exposureCompensation(exposureCompensation)) }
+        if let exposureCompensation {
+            // Face metering only supports -1.0...+3.0 EV.
+            let low = metering == .face ? -10 : -30
+            out.append(RazerCommand.exposureCompensation(max(exposureCompensation, low)))
+        }
         if faceFocus != nil || stylizedLighting != nil {
             out.append(RazerCommand.focus(face: faceFocus ?? false, stylized: stylizedLighting ?? false))
         }
