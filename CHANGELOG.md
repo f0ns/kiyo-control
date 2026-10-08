@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Kiyo V2 Pro (1532:0E0A) support for standard UVC controls; Razer-only settings are hidden.
+
 ## 0.2.0
 
 - HDR setting (On/Off) in the Processing tab, using the camera's backlight compensation. On hardware

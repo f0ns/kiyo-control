@@ -14,9 +14,13 @@ public final class CameraController {
     public private(set) var profileNames: [String] = []
     public private(set) var backups: [ProfileStore.Backup] = []
     public var lastError: String?
+    public var device: KiyoDevice { camera?.device ?? lastDevice }
+    public var supportsRazer: Bool { device.razerCommands }
+    private var lastDevice = KiyoDevice.proUltra
 
     public let store: ProfileStore
-    private let controls: [UVCControl]
+    private var controls: [UVCControl]
+    private let baseControls: [UVCControl]
     private let connect: () -> UVCCamera?
     private var camera: UVCCamera?
 
@@ -24,6 +28,7 @@ public final class CameraController {
                 connect: @escaping () -> UVCCamera? = { UVCCamera() }) {
         self.store = store
         self.controls = controls
+        baseControls = controls
         self.connect = connect
         activeProfile = store.activeProfileName.flatMap { $0.isEmpty ? nil : $0 } ?? "Default"
         reloadLists()
@@ -63,11 +68,20 @@ public final class CameraController {
 
     private func connectIfPossible() {
         guard let cam = connect() else { return }
+        // If the camera does not answer, every control would wait for a timeout and startup would freeze.
+        guard (try? cam.get(controls[0])) != nil else { return }
+        // Without Razer's ISO and shutter commands, manual exposure uses the standard exposure time and gain.
+        controls = baseControls + (cam.device.razerCommands ? [] : [KiyoProUltra.exposureTime, KiyoProUltra.gain])
         var r: [String: UVCRange] = [:]
-        for c in controls { r[c.id] = try? cam.range(c) }
+        for c in controls {
+            r[c.id] = try? cam.range(c)
+            // One control can fail normally. If the camera stops answering, stop here instead of freezing.
+            if r[c.id] == nil, (try? cam.get(controls[0])) == nil { return }
+        }
         guard !r.isEmpty else { return }
 
         camera = cam
+        lastDevice = cam.device
         ranges = r
         connected = true
         let current = cam.snapshot(controls)
@@ -174,7 +188,7 @@ public final class CameraController {
 
     /// Stores the current settings in the camera's own memory, after backing them up.
     public func saveToCamera() {
-        guard let camera else { return }
+        guard let camera, camera.device.razerCommands else { return }
         backupCurrent("before-save-to-camera")
         do { try camera.saveToCamera() } catch { report(error, "Could not save to the camera") }
     }
@@ -227,7 +241,7 @@ public final class CameraController {
     }
 
     private func send(_ commands: [[UInt8]]) {
-        guard let camera else { return }
+        guard let camera, camera.device.razerCommands else { return }
         for command in commands {
             do { try camera.send(command) } catch { report(error, "Could not apply a Razer setting") }
         }
