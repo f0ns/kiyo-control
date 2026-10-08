@@ -65,6 +65,8 @@ struct ContentView: View {
         .ignoresSafeArea(edges: .top)
         .frame(minWidth: 1000, minHeight: 680)
         .onAppear { preview.start() }
+        // The preview may have started before the camera was ready, so try again when the camera connects.
+        .onChange(of: model.connected) { _, connected in if connected, preview.enabled { preview.start() } }
         // Release the camera (and its light) when the window closes; the app stays in the menu bar.
         .onDisappear { preview.stop() }
     }

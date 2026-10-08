@@ -10,17 +10,19 @@ struct CameraTab: View {
 
     var body: some View {
         SettingsSection(title: "Zoom", onReset: { model.resetToDefault([K.zoom, K.pan, K.tilt]) }) {
-            ControlSlider(model: model, control: K.zoom, format: { "\(Format.zoom($0)) · \(Format.fov($0))" })
+            ControlSlider(model: model, control: K.zoom, format: { model.supportsRazer ? "\(Format.zoom($0)) · \(Format.fov($0))" : Format.zoom($0) })
             ControlSlider(model: model, control: K.pan, format: Format.degrees, minLabel: "LEFT", maxLabel: "RIGHT")
             ControlSlider(model: model, control: K.tilt, format: Format.degrees, minLabel: "DOWN", maxLabel: "UP")
             zoomPresets
         }
+        if model.supportsRazer {
         SettingsSection(title: "Field of View") {
             OptionButtons(title: nil,
                           options: FieldOfView.Preset.allCases.map { ($0, "\($0.name) \(Format.fov($0.zoom))") },
                           selection: FieldOfView.Preset(zoom: model.value(K.zoom))) { model.set(K.zoom, $0.zoom) }
             Text("Sets the zoom; the camera has no separate field-of-view setting.")
                 .font(.caption).foregroundStyle(.secondary)
+        }
         }
         SettingsSection(title: "Auto Focus", toggle: autoBinding(K.autoFocus, on: 1, off: 0)) {
             ControlSlider(model: model, control: K.focus, label: "Manual focus",
@@ -33,7 +35,13 @@ struct CameraTab: View {
         }
         SettingsSection(title: "Auto Exposure", toggle: autoBinding(K.autoExposure, on: 8, off: 1),
                         onReset: { model.resetToDefault([K.autoExposure]) }) {
-            if model.isAuto(K.autoExposure) {
+            if !model.supportsRazer {
+                if !model.isAuto(K.autoExposure) {
+                    ControlSlider(model: model, control: K.exposureTime, label: "Shutter speed",
+                                  format: Format.shutter, minLabel: "FAST", maxLabel: "SLOW")
+                    ControlSlider(model: model, control: K.gain)
+                }
+            } else if model.isAuto(K.autoExposure) {
                 RazerOptions(model: model, title: "Metering",
                              options: [(.average, "Average"), (.center, "Center"), (.face, "Face")], keyPath: \.metering)
                 compensation
@@ -115,11 +123,13 @@ struct ProcessingTab: View {
     @ObservedObject var model: CameraModel
 
     var body: some View {
+        if model.supportsRazer {
         SettingsSection(title: "Noise Reduction") {
             RazerOptions(model: model, title: "3D (between frames)", options: [(false, "Off"), (true, "On")],
                          keyPath: \.noiseReduction3D)
             RazerOptions(model: model, title: "2D (within a frame)", options: [(false, "Off"), (true, "On")],
                          keyPath: \.noiseReduction2D)
+        }
         }
         SettingsSection(title: "HDR") {
             OptionButtons(title: nil, options: [(0, "Off"), (1, "On")], selection: model.value(K.backlight)) {
@@ -128,11 +138,13 @@ struct ProcessingTab: View {
             Text("Brightens shadows without blowing out highlights, using the camera's backlight compensation.")
                 .font(.caption).foregroundStyle(.secondary)
         }
+        if model.supportsRazer {
         SettingsSection(title: "Lens Distortion Compensation") {
             RazerOptions(model: model, title: nil, options: [(false, "Off (82°)"), (true, "On (72°)")],
                          keyPath: \.lensCorrection)
             Text("Straightens lines at the edges. Takes effect after SAVE and replugging the camera.")
                 .font(.caption).foregroundStyle(.secondary)
+        }
         }
     }
 }

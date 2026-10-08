@@ -18,8 +18,10 @@ struct ImageTab: View {
             ControlSlider(model: model, control: K.whiteBalance, label: "Temperature", format: Format.kelvin,
                           minLabel: "WARM", maxLabel: "COOL", disabled: model.isAuto(K.autoWhiteBalance))
         }
-        SettingsSection(title: "Mirror Video") {
-            RazerOptions(model: model, title: nil, options: [(false, "Off"), (true, "On")], keyPath: \.mirror)
+        if model.supportsRazer {
+            SettingsSection(title: "Mirror Video") {
+                RazerOptions(model: model, title: nil, options: [(false, "Off"), (true, "On")], keyPath: \.mirror)
+            }
         }
         SettingsSection(title: "Anti-Flicker") {
             OptionButtons(title: nil, options: [(0, "Off"), (1, "50 Hz"), (2, "60 Hz")],

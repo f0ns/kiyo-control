@@ -5,7 +5,7 @@
 <h1 align="center">Kiyo Control</h1>
 
 <p align="center">
-  Camera settings for the <b>Razer Kiyo Pro Ultra</b> on macOS — the controls Razer Synapse offers on Windows but not on Mac.
+  Camera settings for the <b>Razer Kiyo Pro Ultra</b> and <b>Kiyo V2 Pro</b> on macOS — the controls Razer Synapse offers on Windows but not on Mac.
 </p>
 
 <p align="center">
@@ -39,9 +39,13 @@
 | Working (app) | Field of view presets Wide/Medium/Narrow (set the zoom; FOV in degrees is calculated from it) |
 | Unconfirmed | HDR uses the camera's backlight compensation: shadows come up, highlights stay. Whether Synapse's HDR sends a different Razer command is unknown; the Dell UltraSharp HDR command (`ff 11`) is rejected. |
 
+The **Kiyo V2 Pro** (USB 1532:0E0A) only supports the standard controls, plus shutter speed and gain in manual
+exposure. The Razer commands (ISO, metering, mirror, noise reduction, lens correction…) are hidden,
+because nobody has documented this camera's extension unit. The app sends nothing to it.
+
 ## Install
 
-You need a Mac with macOS 15 (Sequoia) or newer and a Razer Kiyo Pro Ultra.
+You need a Mac with macOS 15 (Sequoia) or newer and a Razer Kiyo Pro Ultra or Kiyo V2 Pro.
 
 ### Easiest: one line
 

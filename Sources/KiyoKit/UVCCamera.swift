@@ -59,15 +59,26 @@ public final class USBTransport: UVCTransport {
 /// Typed access to UVC controls.
 public final class UVCCamera {
     private let transport: UVCTransport
+    public let device: KiyoDevice
 
-    public init(transport: UVCTransport) { self.transport = transport }
-
-    /// Connects to a Kiyo Pro Ultra over USB, or returns nil when it isn't plugged in.
-    public convenience init?() {
-        guard let usb = USBTransport(vendorID: KiyoProUltra.vendorID, productID: KiyoProUltra.productID,
-                                     interface: KiyoProUltra.interface) else { return nil }
-        self.init(transport: usb)
+    public init(transport: UVCTransport, device: KiyoDevice = .proUltra) {
+        self.transport = transport
+        self.device = device
     }
+
+    /// Connects to a supported Kiyo over USB. Returns nil if none is plugged in.
+    public convenience init?() {
+        for device in KiyoDevice.all {
+            if let usb = USBTransport(vendorID: device.vendorID, productID: device.productID, interface: device.interface) {
+                self.init(transport: usb, device: device)
+                return
+            }
+        }
+        return nil
+    }
+
+    /// Controls are declared with the Pro Ultra's Processing Unit id. Other models use a different id, so we swap it here.
+    private func unit(_ c: UVCControl) -> UInt8 { c.unit == KiyoProUltra.pu ? device.processingUnit : c.unit }
 
     public func raw(_ request: UVCRequest, unit: UInt8, selector: UInt8, length: Int) throws -> [UInt8] {
         var buf = [UInt8](repeating: 0, count: length)
@@ -81,7 +92,7 @@ public final class UVCCamera {
     }
 
     public func get(_ c: UVCControl, _ request: UVCRequest = .getCur) throws -> Int {
-        decode(try raw(request, unit: c.unit, selector: c.selector, length: c.length), c)
+        decode(try raw(request, unit: unit(c), selector: c.selector, length: c.length), c)
     }
 
     public func set(_ c: UVCControl, _ value: Int) throws {
@@ -90,11 +101,11 @@ public final class UVCCamera {
             bytes = [UInt8](repeating: 0, count: c.length)
         } else {
             // Packed control: keep the other values as they are.
-            bytes = try raw(.getCur, unit: c.unit, selector: c.selector, length: c.length)
+            bytes = try raw(.getCur, unit: unit(c), selector: c.selector, length: c.length)
         }
         let v = UInt64(bitPattern: Int64(value))
         for i in 0..<c.size { bytes[c.offset + i] = UInt8(truncatingIfNeeded: v >> (8 * i)) }
-        try transport.request(.setCur, unit: c.unit, selector: c.selector, data: &bytes)
+        try transport.request(.setCur, unit: unit(c), selector: c.selector, data: &bytes)
     }
 
     /// Range of a control. Choice/toggle controls have no MIN/MAX in UVC, so they get a synthetic range.

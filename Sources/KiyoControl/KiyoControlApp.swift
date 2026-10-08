@@ -96,7 +96,7 @@ struct MenuBarMenu: View {
 
     var body: some View {
         let c = model.controller
-        Text(c.connected ? "Kiyo Pro Ultra connected" : "Kiyo Pro Ultra not connected")
+        Text(c.connected ? "\(c.device.name) connected" : "Kiyo not connected")
         Divider()
         ForEach(c.profileNames, id: \.self) { name in
             Toggle(name, isOn: Binding(get: { c.activeProfile == name }, set: { if $0 { model.switchProfile(name) } }))

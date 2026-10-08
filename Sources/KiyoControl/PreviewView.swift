@@ -39,7 +39,7 @@ final class PreviewController: ObservableObject {
         let devices = AVCaptureDevice.DiscoverySession(
             deviceTypes: [.external], mediaType: .video, position: .unspecified).devices
         guard let device = devices.first(where: { $0.localizedName.localizedCaseInsensitiveContains("Kiyo") }) else {
-            status = "Kiyo Pro Ultra not found"
+            status = "Kiyo not found"
             return
         }
         session.beginConfiguration()
