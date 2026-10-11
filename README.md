@@ -31,6 +31,11 @@
 - Runs from the menu bar, optionally at login, so profiles apply without opening the window.
 - Zoom presets 1–5 per profile, also one click away in the menu bar menu.
 - Works while other apps (Zoom, Meet, OBS…) use the camera.
+- Preview resolution and frame rate, like Synapse's. 4K needs a USB 3 port; through a USB 2 hub (such as
+  a keyboard's) the camera offers up to 1080p. Other apps choose their
+  own when they turn the camera on: in OBS under Video Capture Device › Properties › Resolution/FPS Type:
+  Custom, in Zoom under Settings › Video › HD.
+- Tells you when a new version is out.
 
 | Status | Settings |
 |---|---|
@@ -83,6 +88,9 @@ That's it. Plug in the camera and the settings appear.
   the screen), so your settings come back whenever you plug the camera in.
 - Want it to start automatically? Click the menu bar icon and turn on **Launch at Login**.
 - Made a mess? Click **Reset All Settings**, or the **⋯** button › **Restore Backup**.
+- New version out? A banner at the top of the window tells you. The app asks GitHub once a day
+  (nothing about you or your camera is sent); turn it off in the menu bar menu under
+  **Check for Updates Automatically**.
 
 ### Uninstall
 
@@ -103,6 +111,7 @@ open build/KiyoControl.app
 ```sh
 swift test             # unit tests for KiyoKit (uses a fake camera, no hardware needed)
 scripts/smoke.sh 4 25  # launches the app 4x25s with a self-test; fails on any crash (camera plugged in)
+scripts/smoke.sh 1 60 KIYO_MODE_CYCLE=1  # switches the preview through every resolution and frame rate
 ```
 
 `scripts/release.sh` builds a release zip (and signs/notarizes when `DEVELOPER_ID` and

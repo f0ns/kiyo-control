@@ -2,7 +2,7 @@ import Testing
 @testable import KiyoKit
 
 @Suite struct VideoModeTests {
-    // What the Kiyo Pro Ultra reports on macOS: two pixel formats for some sizes, odd frame rates.
+    // What the Kiyo Pro Ultra reports on macOS over USB 2: two pixel formats for some sizes, odd frame rates.
     let reported: [VideoMode.Format] = [
         .init(width: 640, height: 360, frameRates: [30.00003000003, 24.00003840006144, 15.000015000015]),
         .init(width: 640, height: 360, frameRates: [60.000240000960005, 30.00003000003]),
