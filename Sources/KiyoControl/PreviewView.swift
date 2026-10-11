@@ -24,6 +24,22 @@ final class PreviewController: ObservableObject {
         }
     }
 
+    /// Opens the camera afresh after it was plugged in again, picking up its current formats.
+    func reconnect() {
+        session.beginConfiguration()
+        session.inputs.forEach(session.removeInput)
+        session.commitConfiguration()
+        configured = false
+        device = nil
+        modes = []
+        mode = nil
+        status = "Starting preview…"
+        // AVFoundation lists the camera a moment after USB does.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            MainActor.assumeIsolated { if self.enabled { self.start() } }
+        }
+    }
+
     func stop() {
         let session = session
         queue.async { session.stopRunning() }

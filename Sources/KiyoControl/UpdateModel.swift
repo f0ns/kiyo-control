@@ -78,9 +78,11 @@ struct UpdateBanner: View {
     var body: some View {
         if let release = updates.available {
             bar {
-                Image(systemName: "arrow.down.circle.fill").foregroundStyle(Color.accentGreen)
-                Text("VERSION \(release.version.description) AVAILABLE")
-                    .font(.system(size: 13, weight: .medium)).tracking(0.6)
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.down.circle.fill").foregroundStyle(Color.accentGreen)
+                    Text("VERSION \(release.version.description) AVAILABLE")
+                        .font(.system(size: 13, weight: .medium)).tracking(0.6)
+                }
                 Text("You have \(updates.currentVersion ?? "?")").foregroundStyle(.secondary)
                 Spacer()
                 Button("Skip This Version") { updates.skip() }
@@ -91,9 +93,11 @@ struct UpdateBanner: View {
             }
         } else if updates.upToDate {
             bar {
-                Image(systemName: "checkmark.circle.fill").foregroundStyle(Color.accentGreen)
-                Text("KIYO CONTROL \(updates.currentVersion ?? "") IS UP TO DATE")
-                    .font(.system(size: 13, weight: .medium)).tracking(0.6)
+                HStack(spacing: 4) {
+                    Image(systemName: "checkmark.circle.fill").foregroundStyle(Color.accentGreen)
+                    Text("KIYO CONTROL \(updates.currentVersion ?? "") IS UP TO DATE")
+                        .font(.system(size: 13, weight: .medium)).tracking(0.6)
+                }
                 Spacer()
             }
         }

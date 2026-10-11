@@ -5,6 +5,8 @@ import SwiftUI
 @MainActor
 final class CameraModel: ObservableObject {
     let controller = CameraController(store: ProfileStore())
+    /// The camera's USB connection; on USB 2 it offers no 4K.
+    private(set) var link: USBLink?
     private var pollTimer: Timer?
 
     init() {
@@ -33,7 +35,10 @@ final class CameraModel: ObservableObject {
     func poll() {
         let wasConnected = controller.connected
         controller.poll()
-        if controller.connected != wasConnected { objectWillChange.send() }
+        if controller.connected != wasConnected || (controller.connected && link == nil) {
+            link = controller.connected ? USBLink.current() : nil
+            objectWillChange.send()
+        }
     }
 }
 

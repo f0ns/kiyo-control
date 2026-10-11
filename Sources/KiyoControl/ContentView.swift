@@ -67,6 +67,8 @@ struct ContentView: View {
         .ignoresSafeArea(edges: .top)
         .frame(minWidth: 1000, minHeight: 680)
         .onAppear { preview.start() }
+        // A replug (e.g. moving to a USB 3 port) can change the formats the camera offers.
+        .onChange(of: model.connected) { _, connected in if connected { preview.reconnect() } }
         // Release the camera (and its light) when the window closes; the app stays in the menu bar.
         .onDisappear { preview.stop() }
     }
