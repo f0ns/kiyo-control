@@ -5,6 +5,7 @@ enum Tab: String, CaseIterable { case camera = "Camera", processing = "Processin
 
 struct ContentView: View {
     @ObservedObject var model: CameraModel
+    @ObservedObject var updates: UpdateModel
     @StateObject private var preview = PreviewController()
     @State private var tab = Tab.camera
 
@@ -17,6 +18,7 @@ struct ContentView: View {
                 .foregroundStyle(Color(white: 0.75))
                 .frame(maxWidth: .infinity, minHeight: 38)
                 .background(Color.chrome)
+            UpdateBanner(updates: updates)
             TopBar(model: model, tab: $tab)
             Divider()
             HStack(spacing: 0) {

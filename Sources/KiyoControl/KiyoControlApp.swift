@@ -30,6 +30,7 @@ struct KiyoControlApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     /// Lives as long as the app, so the camera is managed even with the window closed.
     @StateObject private var model = CameraModel()
+    @StateObject private var updates = UpdateModel()
 
     init() {
         // KIYO_SELFTEST=1 repeatedly runs the main-actor isolation check SwiftUI relies on (see scripts/smoke.sh).
@@ -40,7 +41,7 @@ struct KiyoControlApp: App {
         if let path = ProcessInfo.processInfo.environment["KIYO_SNAPSHOT"] {
             Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
                 MainActor.assumeIsolated {
-                    if let view = NSApp.windows.first(where: { $0.isVisible && $0.contentView != nil })?.contentView,
+                    if let view = NSApp.windows.filter(\.isVisible).max(by: { $0.frame.width < $1.frame.width })?.contentView,
                        let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) {
                         view.cacheDisplay(in: view.bounds, to: rep)
                         try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))
@@ -53,14 +54,14 @@ struct KiyoControlApp: App {
 
     var body: some Scene {
         Window("Kiyo Control", id: "main") {
-            ContentView(model: model)
+            ContentView(model: model, updates: updates)
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentMinSize)
         .defaultLaunchBehavior(.suppressed)
 
         MenuBarExtra {
-            MenuBarMenu(model: model)
+            MenuBarMenu(model: model, updates: updates)
         } label: {
             MenuBarLabel(connected: model.connected, launchedAtLogin: appDelegate.launchedAtLogin)
         }
@@ -92,11 +93,15 @@ struct MenuBarLabel: View {
 
 struct MenuBarMenu: View {
     @ObservedObject var model: CameraModel
+    @ObservedObject var updates: UpdateModel
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         let c = model.controller
         Text(c.connected ? "Kiyo Pro Ultra connected" : "Kiyo Pro Ultra not connected")
+        if let release = updates.available {
+            Button("Update Available: \(release.version.description)…") { updates.download() }
+        }
         Divider()
         ForEach(c.profileNames, id: \.self) { name in
             Toggle(name, isOn: Binding(get: { c.activeProfile == name }, set: { if $0 { model.switchProfile(name) } }))
@@ -116,6 +121,12 @@ struct MenuBarMenu: View {
             NSApp.activate()
         }
         Link("Donate…", destination: Links.donate)
+        Button("Check for Updates…") {
+            updates.check(manual: true)
+            openWindow(id: "main")
+            NSApp.activate()
+        }
+        Toggle("Check for Updates Automatically", isOn: $updates.autoCheck)
         Toggle("Launch at Login", isOn: Binding(get: { LaunchAtLogin.isEnabled }, set: { LaunchAtLogin.isEnabled = $0 }))
         Divider()
         Button("Quit Kiyo Control") { NSApp.terminate(nil) }
