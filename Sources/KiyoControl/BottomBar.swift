@@ -26,6 +26,17 @@ struct BottomBar: View {
             }
             .foregroundStyle(Color(white: 0.7))
             .help("Kiyo Control is free. If it helps you, consider a donation.")
+            Menu {
+                ForEach(preview.modes, id: \.self) { mode in
+                    Toggle(mode.label, isOn: Binding(get: { preview.mode == mode }, set: { if $0 { preview.select(mode) } }))
+                }
+            } label: {
+                Text(preview.formatLabel.uppercased()).monospacedDigit()
+            }
+            .menuStyle(.borderlessButton)
+            .fixedSize()
+            .disabled(preview.modes.isEmpty)
+            .help("Resolution and frame rate of this preview. Zoom, Teams, OBS and other apps choose their own when they turn the camera on.")
             Toggle("PREVIEW", isOn: $preview.enabled).toggleStyle(.switch).tint(.accentGreen)
         }
         .padding(.horizontal, 16)
@@ -35,7 +46,7 @@ struct BottomBar: View {
 
     private var summary: String {
         guard model.connected else { return "Connect your Kiyo Pro Ultra" }
-        var parts = [preview.formatLabel, Format.zoom(model.value(K.zoom)), "FOV \(Format.fov(model.value(K.zoom)))"]
+        var parts = [Format.zoom(model.value(K.zoom)), "FOV \(Format.fov(model.value(K.zoom)))"]
         if model.isAuto(K.autoExposure) {
             parts.append("AE")
         } else {
