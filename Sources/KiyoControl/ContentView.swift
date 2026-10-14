@@ -5,6 +5,7 @@ enum Tab: String, CaseIterable { case camera = "Camera", processing = "Processin
 
 struct ContentView: View {
     @ObservedObject var model: CameraModel
+    @ObservedObject var updates: UpdateModel
     @StateObject private var preview = PreviewController()
     @State private var tab = Tab.camera
 
@@ -17,6 +18,7 @@ struct ContentView: View {
                 .foregroundStyle(Color(white: 0.75))
                 .frame(maxWidth: .infinity, minHeight: 38)
                 .background(Color.chrome)
+            UpdateBanner(updates: updates)
             TopBar(model: model, tab: $tab)
             Divider()
             HStack(spacing: 0) {
@@ -65,8 +67,8 @@ struct ContentView: View {
         .ignoresSafeArea(edges: .top)
         .frame(minWidth: 1000, minHeight: 680)
         .onAppear { preview.start() }
-        // The preview may have started before the camera was ready, so try again when the camera connects.
-        .onChange(of: model.connected) { _, connected in if connected, preview.enabled { preview.start() } }
+        // A replug (e.g. moving to a USB 3 port) can change the formats the camera offers.
+        .onChange(of: model.connected) { _, connected in if connected { preview.reconnect() } }
         // Release the camera (and its light) when the window closes; the app stays in the menu bar.
         .onDisappear { preview.stop() }
     }

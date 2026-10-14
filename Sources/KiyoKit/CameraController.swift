@@ -67,16 +67,16 @@ public final class CameraController {
     public func reapply() { apply(values, razer: razer) }
 
     private func connectIfPossible() {
-        guard let cam = connect() else { return }
+        guard let probe = controls.first, let cam = connect() else { return }
         // If the camera does not answer, every control would wait for a timeout and startup would freeze.
-        guard (try? cam.get(controls[0])) != nil else { return }
+        guard (try? cam.get(probe)) != nil else { return }
         // Without Razer's ISO and shutter commands, manual exposure uses the standard exposure time and gain.
         controls = baseControls + (cam.device.razerCommands ? [] : [KiyoProUltra.exposureTime, KiyoProUltra.gain])
         var r: [String: UVCRange] = [:]
         for c in controls {
             r[c.id] = try? cam.range(c)
             // One control can fail normally. If the camera stops answering, stop here instead of freezing.
-            if r[c.id] == nil, (try? cam.get(controls[0])) == nil { return }
+            if r[c.id] == nil, (try? cam.get(probe)) == nil { return }
         }
         guard !r.isEmpty else { return }
 

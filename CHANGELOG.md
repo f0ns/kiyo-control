@@ -4,6 +4,17 @@
 
 - Kiyo V2 Pro (1532:0E0A) support for standard UVC controls; Razer-only settings are hidden.
 
+## 0.3.0
+
+- Preview resolution and frame rate: click the format next to PREVIEW (up to 4K; the camera only offers
+  4K when connected to a USB 3 port, not through a USB 2 hub such as a keyboard's). Like Synapse's setting it only changes this app's preview;
+  Zoom, Teams, OBS and others choose their own.
+- USB 2 warning next to the resolution picker when the camera is connected through a USB 2 hub, and the
+  picker refreshes when you replug the camera (e.g. into a USB 3 port for 4K).
+- Update notice: once a day the app asks GitHub for the latest release and shows a banner when a
+  newer version is out (Download / Skip This Version). Menu bar: **Check for Updates…** and
+  **Check for Updates Automatically**.
+
 ## 0.2.0
 
 - HDR setting (On/Off) in the Processing tab, using the camera's backlight compensation. On hardware
