@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.4.0
 
 - Kiyo V2 Pro (1532:0E0A) support for standard UVC controls; Razer-only settings are hidden.
+  Community-tested; thanks to @samanthahuggan.
 
 ## 0.3.0
 
