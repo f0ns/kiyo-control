@@ -98,7 +98,7 @@ struct MenuBarMenu: View {
 
     var body: some View {
         let c = model.controller
-        Text(c.connected ? "Kiyo Pro Ultra connected" : "Kiyo Pro Ultra not connected")
+        Text(c.connected ? "\(c.device.name) connected" : "Kiyo not connected")
         if let release = updates.available {
             Button("Update Available: \(release.version.description)…") { updates.download() }
         }

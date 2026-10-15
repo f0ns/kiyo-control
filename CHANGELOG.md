@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Kiyo V2 Pro (1532:0E0A) support for standard UVC controls; Razer-only settings are hidden.
+
 ## 0.3.0
 
 - Preview resolution and frame rate: click the format next to PREVIEW (up to 4K; the camera only offers

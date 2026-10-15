@@ -21,7 +21,7 @@ func fail(_ msg: String) -> Never {
 
 let args = Array(CommandLine.arguments.dropFirst())
 guard let cmd = args.first else { fail(usage) }
-guard let cam = UVCCamera() else { fail("Kiyo Pro Ultra not found") }
+guard let cam = UVCCamera() else { fail("no supported Kiyo found") }
 
 func control(_ id: String) -> UVCControl {
     guard let c = KiyoProUltra.control(id) else {
@@ -63,6 +63,10 @@ case "restore" where args.count == 2:
     let failed = cam.apply(p.values, ranges: ranges())
     if !failed.isEmpty { fail("failed: \(failed)") }
     print("restored \(p.values.count) values")
+case "isp" where args.count >= 2 && !cam.device.razerCommands:
+    fail("Razer commands are not known for the \(cam.device.name)")
+case "save-to-camera" where !cam.device.razerCommands, "isp-read" where !cam.device.razerCommands:
+    fail("Razer commands are not known for the \(cam.device.name)")
 case "isp" where args.count >= 2:
     // Razer extension unit 6: selector 1 takes an 8-byte command, selector 2 returns the result.
     // Only command families documented for this camera (cameractrls issue #19) are allowed.

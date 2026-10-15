@@ -63,6 +63,8 @@ enum Format {
     static func zoom(_ v: Int) -> String { String(format: "%.1fX", Double(v) / 100) }
     static func fov(_ zoom: Int) -> String { "\(Int(FieldOfView.degrees(zoom: zoom).rounded()))°" }
     static func degrees(_ v: Int) -> String { "\(v / 3600)°" }
+    /// Exposure time is measured in units of 100 µs.
+    static func shutter(_ v: Int) -> String { v > 0 ? "1/\(Int((10_000 / Double(v)).rounded()))S" : "–" }
     static func kelvin(_ v: Int) -> String { "\(v)K" }
 }
 
@@ -175,8 +177,10 @@ struct RazerOptions<Value: Hashable>: View {
     let keyPath: WritableKeyPath<RazerSettings, Value?>
 
     var body: some View {
-        OptionButtons(title: title, options: options, selection: model.razer[keyPath: keyPath]) { v in
-            model.setRazer { $0[keyPath: keyPath] = v }
+        if model.supportsRazer {
+            OptionButtons(title: title, options: options, selection: model.razer[keyPath: keyPath]) { v in
+                model.setRazer { $0[keyPath: keyPath] = v }
+            }
         }
     }
 }

@@ -2,7 +2,7 @@ import Foundation
 import IOKit
 
 /// The USB connection the camera negotiated. On a USB 2 link (e.g. a keyboard's hub) the
-/// Kiyo Pro Ultra offers at most 1080p; 4K needs USB 3.
+/// Kiyo offers at most 1080p; 4K needs USB 3.
 public struct USBLink: Equatable, Sendable {
     public let bitsPerSecond: Int
 
@@ -11,8 +11,15 @@ public struct USBLink: Equatable, Sendable {
     public var limits4K: Bool { bitsPerSecond < 5_000_000_000 }
     public var name: String { limits4K ? "USB 2" : "USB 3" }
 
-    /// The link of the plugged-in Kiyo Pro Ultra, or nil when it isn't connected.
-    public static func current(vendorID: UInt16 = KiyoProUltra.vendorID, productID: UInt16 = KiyoProUltra.productID) -> USBLink? {
+    /// The link of the plugged-in Kiyo (any supported model), or nil when none is connected.
+    public static func current() -> USBLink? {
+        for device in KiyoDevice.all {
+            if let link = current(vendorID: device.vendorID, productID: device.productID) { return link }
+        }
+        return nil
+    }
+
+    static func current(vendorID: UInt16, productID: UInt16) -> USBLink? {
         let matching = IOServiceMatching("IOUSBHostDevice") as NSMutableDictionary
         matching["idVendor"] = Int(vendorID)
         matching["idProduct"] = Int(productID)

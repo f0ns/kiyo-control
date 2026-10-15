@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import KiyoKit
 
@@ -84,5 +85,63 @@ typealias K = KiyoProUltra
         fake.stub(K.gain, cur: 0)
         camera.apply(["gain": 50, "autoExposure": 1], ranges: [:])
         #expect(!fake.setLog.contains(fake.key(K.gain)))
+    }
+}
+
+@Suite struct KiyoDeviceTests {
+    @Test func v2ProUsesItsOwnProcessingUnitId() throws {
+        let fake = FakeTransport()
+        let cam = UVCCamera(transport: fake, device: .v2Pro)
+        try cam.set(K.brightness, 10)
+        try cam.set(K.zoom, 150)
+        #expect(fake.setLog.map(\.unit) == [2, 1])
+    }
+
+    @Test func proUltraKeepsUnit3() throws {
+        let fake = FakeTransport()
+        try UVCCamera(transport: fake).set(K.brightness, 10)
+        #expect(fake.setLog.map(\.unit) == [3])
+    }
+
+    @Test func v2ProNeverReceivesRazerCommands() throws {
+        let fake = FakeTransport()
+        fake.stub(K.zoom, cur: 100, min: 100, max: 400, def: 100)
+        let store = ProfileStore(root: FileManager.default.temporaryDirectory.appending(path: "kiyo-v2-\(UUID().uuidString)"))
+        let c = CameraController(store: store, controls: [K.zoom]) { UVCCamera(transport: fake, device: .v2Pro) }
+        c.poll()
+        c.setRazer { $0.mirror = true; $0.iso = 400 }
+        c.saveToCamera()
+        #expect(!c.supportsRazer)
+        #expect(!fake.setLog.contains { $0.unit == RazerCommand.unit })
+    }
+}
+
+@Suite struct V2ProExposureTests {
+    @Test func v2ProManualExposureUsesStandardControls() throws {
+        let fake = FakeTransport()
+        fake.stub(K.zoom, cur: 100, min: 100, max: 400, def: 100)
+        fake.stub(K.autoExposure, cur: 1, min: 1, max: 8, def: 8)
+        fake.stub(K.exposureTime, cur: 100, min: 10, max: 2000, def: 100)
+        fake.stub(K.gain, cur: 5, min: 0, max: 100, def: 0)
+        // The V2 Pro's Processing Unit is id 2, not 3.
+        let (from, to) = (fake.key(K.gain), FakeTransport.Key(unit: 2, selector: K.gain.selector))
+        fake.current[to] = fake.current[from]; fake.minimum[to] = fake.minimum[from]
+        fake.maximum[to] = fake.maximum[from]; fake.defaults[to] = fake.defaults[from]
+        let store = ProfileStore(root: FileManager.default.temporaryDirectory.appending(path: "kiyo-v2e-\(UUID().uuidString)"))
+        let c = CameraController(store: store, controls: [K.zoom, K.autoExposure]) { UVCCamera(transport: fake, device: .v2Pro) }
+        c.poll()
+        #expect(c.ranges["exposureTime"]?.max == 2000)
+        #expect(c.ranges["gain"]?.max == 100)
+        c.set(K.exposureTime, 5000)
+        #expect(c.value(K.exposureTime) == 2000)
+    }
+
+    @Test func proUltraDoesNotUseStandardExposureControls() {
+        let fake = FakeTransport()
+        fake.stub(K.zoom, cur: 100, min: 100, max: 400, def: 100)
+        let store = ProfileStore(root: FileManager.default.temporaryDirectory.appending(path: "kiyo-ue-\(UUID().uuidString)"))
+        let c = CameraController(store: store, controls: [K.zoom]) { UVCCamera(transport: fake) }
+        c.poll()
+        #expect(c.ranges["exposureTime"] == nil)
     }
 }

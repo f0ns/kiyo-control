@@ -59,8 +59,8 @@ struct BottomBar: View {
     static let usb2Hint = "Connected over USB 2 (e.g. through a keyboard or monitor hub). Plug the camera into a USB 3 port for 4K."
 
     private var summary: String {
-        guard model.connected else { return "Connect your Kiyo Pro Ultra" }
-        var parts = [Format.zoom(model.value(K.zoom)), "FOV \(Format.fov(model.value(K.zoom)))"]
+        guard model.connected else { return "Connect your Kiyo" }
+        var parts = [Format.zoom(model.value(K.zoom)), model.supportsRazer ? "FOV \(Format.fov(model.value(K.zoom)))" : ""]
         if model.isAuto(K.autoExposure) {
             parts.append("AE")
         } else {
