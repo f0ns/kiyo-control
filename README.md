@@ -36,6 +36,17 @@
   own when they turn the camera on: in OBS under Video Capture Device › Properties › Resolution/FPS Type:
   Custom, in Zoom under Settings › Video › HD.
 - Tells you when a new version is out.
+- Shows the camera's firmware version in the `…` menu (`kiyoctl info` prints it too). Kiyo Pro Ultra only.
+
+### Firmware updates: not supported
+
+Kiyo Control does not update the camera's firmware, and won't. Razer's update protocol is undocumented,
+and a wrong command or an unplug halfway could brick the camera. Use Razer's own updater, which runs
+on Windows only: [Kiyo Pro Ultra firmware updater](https://mysupport.razer.com/app/answers/detail/a_id/9777).
+
+The version the app shows is the one the camera reports over USB (e.g. `8.21`). Razer's updater uses
+its own numbering (e.g. `v1.0.6.1`), and the two don't match one to one. To check whether you're up to
+date, run Razer's updater: it tells you.
 
 | Status | Settings |
 |---|---|
@@ -126,6 +137,7 @@ scripts/smoke.sh 1 60 KIYO_MODE_CYCLE=1  # switches the preview through every re
 
 ```sh
 swift build --product kiyoctl
+.build/debug/kiyoctl info               # model, USB link, firmware version
 .build/debug/kiyoctl list               # every control with value and range
 .build/debug/kiyoctl set zoom 200       # 2.0x
 .build/debug/kiyoctl backup

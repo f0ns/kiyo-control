@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Kiyo Pro Ultra: the ⋯ menu shows the camera's firmware version and links to Razer's firmware updater (Windows
+  only). Kiyo Control itself does not update firmware: too risky, a failed flash can brick the camera. `kiyoctl info` prints model, USB link and firmware version.
+
 ## 0.4.0
 
 - Kiyo V2 Pro (1532:0E0A) support for standard UVC controls; Razer-only settings are hidden.

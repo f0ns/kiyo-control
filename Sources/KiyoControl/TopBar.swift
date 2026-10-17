@@ -1,7 +1,7 @@
 import KiyoKit
 import SwiftUI
 
-/// Profile picker, profile/backup menu, tab switcher and Reset All Settings.
+/// Profile picker, profile/backup/firmware menu, tab switcher and Reset All Settings.
 struct TopBar: View {
     @ObservedObject var model: CameraModel
     @Binding var tab: Tab
@@ -35,6 +35,11 @@ struct TopBar: View {
                 }
                 .disabled(c.backups.isEmpty || !c.connected)
                 Button("Show Backups in Finder") { model.revealBackups() }
+                if let updater = c.device.firmwareUpdater {
+                    Divider()
+                    Text("Firmware \(model.link?.firmware ?? "unknown")")
+                    Link("Firmware Updates (Windows)…", destination: updater)
+                }
             } label: { Image(systemName: "ellipsis") }
             .menuStyle(.borderlessButton)
             .fixedSize()

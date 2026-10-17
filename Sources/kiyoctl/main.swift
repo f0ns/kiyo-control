@@ -2,7 +2,8 @@ import Foundation
 import KiyoKit
 
 let usage = """
-usage: kiyoctl list                 show every control with current value and range
+usage: kiyoctl info                 show model, USB link and firmware version (Pro Ultra)
+       kiyoctl list                 show every control with current value and range
        kiyoctl get <control>
        kiyoctl set <control> <value>
        kiyoctl backup              save a snapshot to the app's backup folder
@@ -37,6 +38,11 @@ func ranges() -> [String: UVCRange] {
 }
 
 switch cmd {
+case "info":
+    let link = USBLink.current()
+    print("model     \(cam.device.name)")
+    print("usb       \(link?.name ?? "unknown")")
+    if cam.device.firmwareUpdater != nil { print("firmware  \(link?.firmware ?? "unknown")") }
 case "list":
     for c in KiyoProUltra.all {
         let cur = (try? cam.get(c)).map(String.init) ?? "--"
