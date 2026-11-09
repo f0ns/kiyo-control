@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Kiyo Pro (1532:0E05) support for standard UVC controls; Razer-only settings are hidden, and the
+  "USB 3 for 4K" hint is not shown for this 1080p camera. Community-tested.
+
 ## 0.5.0
 
 - Kiyo Pro Ultra: the ⋯ menu shows the camera's firmware version and links to Razer's firmware updater (Windows

@@ -67,6 +67,7 @@ extension CameraModel {
     var razer: RazerSettings { controller.razer }
     var supportsRazer: Bool { controller.supportsRazer }
     var deviceName: String { controller.device.name }
+    var supports4K: Bool { controller.device.supports4K }
     func setRazer(_ change: (inout RazerSettings) -> Void) { perform { $0.setRazer(change) } }
 }
 

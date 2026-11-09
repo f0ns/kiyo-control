@@ -12,7 +12,9 @@ struct BottomBar: View {
                 .buttonStyle(GreenButtonStyle())
                 .disabled(!model.isDirty)
                 .keyboardShortcut("s")
-                .help("Saves this profile. Razer settings are also stored in the camera, so they stick without the app.")
+                .help(model.supportsRazer
+                    ? "Saves this profile. Razer settings are also stored in the camera, so they stick without the app."
+                    : "Saves this profile. Kiyo Control re-applies it when the camera is plugged in.")
             Button("Revert") { model.revert() }
                 .disabled(!model.isDirty)
                 .help("Go back to the last saved settings of this profile")
@@ -26,7 +28,7 @@ struct BottomBar: View {
             }
             .foregroundStyle(Color(white: 0.7))
             .help("Kiyo Control is free. If it helps you, consider a donation.")
-            if model.link?.limits4K == true {
+            if showsUSB2Hint {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.yellow)
                     Text("USB 2")
@@ -35,7 +37,7 @@ struct BottomBar: View {
                 .help(Self.usb2Hint)
             }
             Menu {
-                if model.link?.limits4K == true {
+                if showsUSB2Hint {
                     Text(Self.usb2Hint)
                     Divider()
                 }
@@ -56,6 +58,9 @@ struct BottomBar: View {
         .background(Color.surface)
     }
 
+    /// Only for cameras that can stream 4K: a 1080p camera loses nothing it could offer over USB 2.
+    private var showsUSB2Hint: Bool { model.link?.limits4K == true && model.supports4K }
+
     static let usb2Hint = "Connected over USB 2 (e.g. through a keyboard or monitor hub). Plug the camera into a USB 3 port for 4K."
 
     private var summary: String {
@@ -63,9 +68,12 @@ struct BottomBar: View {
         var parts = [Format.zoom(model.value(K.zoom)), model.supportsRazer ? "FOV \(Format.fov(model.value(K.zoom)))" : ""]
         if model.isAuto(K.autoExposure) {
             parts.append("AE")
-        } else {
+        } else if model.supportsRazer {
             if let iso = model.razer.iso { parts.append("ISO \(iso)") }
             if let us = model.razer.shutterMicroseconds { parts.append("SS 1/\(1_000_000 / us)S") }
+        } else {
+            parts.append("SS \(Format.shutter(model.value(K.exposureTime)))")
+            parts.append("GAIN \(model.value(K.gain))")
         }
         parts.append(model.isAuto(K.autoWhiteBalance) ? "AWB" : Format.kelvin(model.value(K.whiteBalance)))
         return parts.filter { !$0.isEmpty }.joined(separator: "   ")
