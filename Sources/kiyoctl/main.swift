@@ -23,17 +23,18 @@ func fail(_ msg: String) -> Never {
 let args = Array(CommandLine.arguments.dropFirst())
 guard let cmd = args.first else { fail(usage) }
 guard let cam = UVCCamera() else { fail("no supported Kiyo found") }
+let controls = cam.device.controls
 
 func control(_ id: String) -> UVCControl {
-    guard let c = KiyoProUltra.control(id) else {
-        fail("unknown control '\(id)'. Known: \(KiyoProUltra.all.map(\.id).joined(separator: ", "))")
+    guard let c = controls.first(where: { $0.id == id }) else {
+        fail("unknown control '\(id)'. Known: \(controls.map(\.id).joined(separator: ", "))")
     }
     return c
 }
 
 func ranges() -> [String: UVCRange] {
     var out: [String: UVCRange] = [:]
-    for c in KiyoProUltra.all { out[c.id] = try? cam.range(c) }
+    for c in controls { out[c.id] = try? cam.range(c) }
     return out
 }
 
@@ -44,7 +45,7 @@ case "info":
     print("usb       \(link?.name ?? "unknown")")
     if cam.device.firmwareUpdater != nil { print("firmware  \(link?.firmware ?? "unknown")") }
 case "list":
-    for c in KiyoProUltra.all {
+    for c in controls {
         let cur = (try? cam.get(c)).map(String.init) ?? "--"
         let r = try? cam.range(c)
         let range = r.map { "min \($0.min)  max \($0.max)  step \($0.step)  default \($0.defaultValue)" } ?? "(range unavailable)"
@@ -60,13 +61,13 @@ case "set" where args.count == 3:
     }
     do { try cam.set(c, v); print("\(c.id) = \(try cam.get(c))") } catch { fail("\(error)") }
 case "backup":
-    do { print(try ProfileStore().backup(cam.snapshot(), reason: "kiyoctl").path) } catch { fail("\(error)") }
+    do { print(try ProfileStore().backup(cam.snapshot(controls), reason: "kiyoctl").path) } catch { fail("\(error)") }
 case "restore" where args.count == 2:
     guard let data = FileManager.default.contents(atPath: args[1]) else { fail("cannot read \(args[1])") }
     let dec = JSONDecoder()
     dec.dateDecodingStrategy = .iso8601
     guard let p = try? dec.decode(Profile.self, from: data) else { fail("not a profile file") }
-    let failed = cam.apply(p.values, ranges: ranges())
+    let failed = cam.apply(p.values, ranges: ranges(), controls: controls)
     if !failed.isEmpty { fail("failed: \(failed)") }
     print("restored \(p.values.count) values")
 case "isp" where args.count >= 2 && !cam.device.razerCommands:

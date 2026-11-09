@@ -2,7 +2,13 @@
 # Builds KiyoControl.app (release) into ./build. The bundle is needed for the camera permission prompt.
 set -e
 # The Command Line Tools SDK lags behind macOS; prefer Xcode when present.
-[ -d /Applications/Xcode.app ] && export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+if [ -d /Applications/Xcode.app ]; then
+    export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+elif [ -z "${SDKROOT:-}" ] && [ ! -f /Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib ] \
+     && [ -d /Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk ]; then
+    # macOS 27 Command Line Tools omit libSwiftUIMacros.dylib needed by MacOSX27.sdk's @State macro.
+    export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.sdk
+fi
 cd "$(dirname "$0")/.."
 
 

@@ -111,7 +111,8 @@ struct MenuBarMenu: View {
             Text("Zoom Presets")
             ForEach(0..<ZoomPreset.slots, id: \.self) { slot in
                 if let preset = model.zoomPresets[slot] {
-                    Button("\(slot + 1) · \(Format.zoom(preset.zoom)) · \(Format.fov(preset.zoom))") { model.applyZoomPreset(slot) }
+                    let zoom = model.supportsRazer ? "\(Format.zoom(preset.zoom)) · \(Format.fov(preset.zoom))" : Format.zoom(preset.zoom)
+                    Button("\(slot + 1) · \(zoom)") { model.applyZoomPreset(slot) }
                 }
             }
         }

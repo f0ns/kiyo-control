@@ -12,7 +12,9 @@ struct BottomBar: View {
                 .buttonStyle(GreenButtonStyle())
                 .disabled(!model.isDirty)
                 .keyboardShortcut("s")
-                .help("Saves this profile. Razer settings are also stored in the camera, so they stick without the app.")
+                .help(model.supportsRazer
+                    ? "Saves this profile. Razer settings are also stored in the camera, so they stick without the app."
+                    : "Saves this profile. Kiyo Control re-applies it when the camera is plugged in.")
             Button("Revert") { model.revert() }
                 .disabled(!model.isDirty)
                 .help("Go back to the last saved settings of this profile")
@@ -66,9 +68,12 @@ struct BottomBar: View {
         var parts = [Format.zoom(model.value(K.zoom)), model.supportsRazer ? "FOV \(Format.fov(model.value(K.zoom)))" : ""]
         if model.isAuto(K.autoExposure) {
             parts.append("AE")
-        } else {
+        } else if model.supportsRazer {
             if let iso = model.razer.iso { parts.append("ISO \(iso)") }
             if let us = model.razer.shutterMicroseconds { parts.append("SS 1/\(1_000_000 / us)S") }
+        } else {
+            parts.append("SS \(Format.shutter(model.value(K.exposureTime)))")
+            parts.append("GAIN \(model.value(K.gain))")
         }
         parts.append(model.isAuto(K.autoWhiteBalance) ? "AWB" : Format.kelvin(model.value(K.whiteBalance)))
         return parts.filter { !$0.isEmpty }.joined(separator: "   ")

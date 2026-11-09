@@ -16,6 +16,12 @@ public struct KiyoDevice: Sendable, Equatable {
     /// True if the camera can stream 4K. The "plug into USB 3 for 4K" hint only makes sense for these.
     public let supports4K: Bool
 
+    /// Controls used with this model: without Razer's ISO and shutter commands, manual exposure uses
+    /// the standard UVC exposure time and gain controls.
+    public var controls: [UVCControl] {
+        KiyoProUltra.all + (razerCommands ? [] : [KiyoProUltra.exposureTime, KiyoProUltra.gain])
+    }
+
     public init(name: String, vendorID: UInt16, productID: UInt16, interface: UInt8, processingUnit: UInt8,
                 razerCommands: Bool, firmwareUpdater: URL?, supports4K: Bool = true) {
         self.name = name

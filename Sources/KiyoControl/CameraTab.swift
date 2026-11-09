@@ -34,7 +34,7 @@ struct CameraTab: View {
                          keyPath: \.stylizedLighting)
         }
         SettingsSection(title: "Auto Exposure", toggle: autoBinding(K.autoExposure, on: 8, off: 1),
-                        onReset: { model.resetToDefault([K.autoExposure]) }) {
+                        onReset: { model.resetToDefault(model.supportsRazer ? [K.autoExposure] : [K.exposureTime, K.gain, K.autoExposure]) }) {
             if !model.supportsRazer {
                 if !model.isAuto(K.autoExposure) {
                     ControlSlider(model: model, control: K.exposureTime, label: "Shutter speed",

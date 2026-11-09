@@ -112,6 +112,9 @@ typealias K = KiyoProUltra
         #expect(!KiyoDevice.kiyoPro.razerCommands)
         #expect(!KiyoDevice.kiyoPro.supports4K)
         #expect(KiyoDevice.kiyoPro.firmwareUpdater == nil)
+        #expect(KiyoDevice.kiyoPro.controls.contains(K.exposureTime))
+        #expect(KiyoDevice.kiyoPro.controls.contains(K.gain))
+        #expect(!KiyoDevice.proUltra.controls.contains(K.exposureTime))
     }
 
     @Test func kiyoProNeverReceivesRazerCommands() throws {
