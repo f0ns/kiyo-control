@@ -26,7 +26,7 @@ struct BottomBar: View {
             }
             .foregroundStyle(Color(white: 0.7))
             .help("Kiyo Control is free. If it helps you, consider a donation.")
-            if model.link?.limits4K == true {
+            if showsUSB2Hint {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.yellow)
                     Text("USB 2")
@@ -35,7 +35,7 @@ struct BottomBar: View {
                 .help(Self.usb2Hint)
             }
             Menu {
-                if model.link?.limits4K == true {
+                if showsUSB2Hint {
                     Text(Self.usb2Hint)
                     Divider()
                 }
@@ -55,6 +55,9 @@ struct BottomBar: View {
         .padding(.vertical, 10)
         .background(Color.surface)
     }
+
+    /// Only for cameras that can stream 4K: a 1080p camera loses nothing it could offer over USB 2.
+    private var showsUSB2Hint: Bool { model.link?.limits4K == true && model.supports4K }
 
     static let usb2Hint = "Connected over USB 2 (e.g. through a keyboard or monitor hub). Plug the camera into a USB 3 port for 4K."
 
