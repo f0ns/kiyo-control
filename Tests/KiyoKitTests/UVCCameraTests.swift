@@ -97,6 +97,21 @@ typealias K = KiyoProUltra
         #expect(fake.setLog.map(\.unit) == [2, 1])
     }
 
+    @Test func v2XUsesProcessingUnit2() throws {
+        let fake = FakeTransport()
+        let cam = UVCCamera(transport: fake, device: .v2X)
+        try cam.set(K.brightness, 10)
+        try cam.set(K.zoom, 150)
+        #expect(fake.setLog.map(\.unit) == [2, 1])
+        #expect(!KiyoDevice.v2X.razerCommands)
+    }
+
+    @Test func everyModelHasItsOwnUSBId() {
+        let ids = KiyoDevice.all.map { "\($0.vendorID):\($0.productID)" }
+        #expect(Set(ids).count == ids.count)
+        #expect(KiyoDevice.all.contains(.v2X))
+    }
+
     @Test func proUltraKeepsUnit3() throws {
         let fake = FakeTransport()
         try UVCCamera(transport: fake).set(K.brightness, 10)
