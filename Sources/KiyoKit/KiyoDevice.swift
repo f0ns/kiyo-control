@@ -1,6 +1,6 @@
 import Foundation
 
-/// A supported camera model. Both models use the same control ids. Only the USB ids and the
+/// A supported camera model. All models use the same control ids. Only the USB ids and the
 /// Processing Unit id differ (the Processing Unit id comes from the camera's UVC descriptors).
 public struct KiyoDevice: Sendable, Equatable {
     public let name: String
@@ -26,5 +26,11 @@ public struct KiyoDevice: Sendable, Equatable {
         name: "Kiyo V2 Pro", vendorID: 0x1532, productID: 0x0E0A, interface: 0,
         processingUnit: 2, razerCommands: false, firmwareUpdater: nil)
 
-    public static let all: [KiyoDevice] = [proUltra, v2Pro]
+    /// Kiyo V2 X, USB 1532:0E0C. Same unit layout as the V2 Pro (Camera Terminal 1, Processing Unit 2).
+    /// Its extension units are not documented, so the app only supports the standard UVC controls.
+    public static let v2X = KiyoDevice(
+        name: "Kiyo V2 X", vendorID: 0x1532, productID: 0x0E0C, interface: 0,
+        processingUnit: 2, razerCommands: false, firmwareUpdater: nil)
+
+    public static let all: [KiyoDevice] = [proUltra, v2Pro, v2X]
 }
