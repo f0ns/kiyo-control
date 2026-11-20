@@ -16,6 +16,8 @@ public final class CameraController {
     public var lastError: String?
     public var device: KiyoDevice { camera?.device ?? lastDevice }
     public var supportsRazer: Bool { device.razerCommands }
+    /// USB port of the connected camera, nil when disconnected.
+    public var cameraLocation: UInt32? { camera?.locationID }
     private var lastDevice = KiyoDevice.proUltra
 
     public let store: ProfileStore
@@ -56,6 +58,13 @@ public final class CameraController {
             self.camera = nil
             connected = false
         }
+    }
+
+    /// Drops the current camera and connects again, e.g. after the user picked another one.
+    public func reconnect() {
+        camera = nil
+        connected = false
+        connectIfPossible()
     }
 
     /// Re-reads values from the camera.

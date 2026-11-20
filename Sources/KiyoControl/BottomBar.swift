@@ -5,6 +5,7 @@ import SwiftUI
 struct BottomBar: View {
     @ObservedObject var model: CameraModel
     @ObservedObject var preview: PreviewController
+    @State private var showCameras = false
 
     var body: some View {
         HStack(spacing: 16) {
@@ -16,7 +17,23 @@ struct BottomBar: View {
             Button("Revert") { model.revert() }
                 .disabled(!model.isDirty)
                 .help("Go back to the last saved settings of this profile")
-            Text(summary.uppercased()).monospacedDigit().foregroundStyle(Color(white: 0.85))
+            if model.connected {
+                Text(summary.uppercased()).monospacedDigit().foregroundStyle(Color(white: 0.85))
+            } else {
+                Button { showCameras.toggle() } label: {
+                    HStack(spacing: 4) {
+                        Text(model.disconnectedTitle.uppercased())
+                        Image(systemName: "chevron.up")
+                    }
+                    .foregroundStyle(Color(white: 0.85))
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help("Show the cameras plugged into this Mac")
+                .popover(isPresented: $showCameras, arrowEdge: .top) {
+                    CameraListView(model: model).padding(16).frame(width: 340)
+                }
+            }
             Spacer()
             Link(destination: Links.donate) {
                 HStack(spacing: 4) {
@@ -59,7 +76,6 @@ struct BottomBar: View {
     static let usb2Hint = "Connected over USB 2 (e.g. through a keyboard or monitor hub). Plug the camera into a USB 3 port for 4K."
 
     private var summary: String {
-        guard model.connected else { return "Connect your Kiyo" }
         var parts = [Format.zoom(model.value(K.zoom)), model.supportsRazer ? "FOV \(Format.fov(model.value(K.zoom)))" : ""]
         if model.isAuto(K.autoExposure) {
             parts.append("AE")

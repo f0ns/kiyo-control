@@ -99,6 +99,7 @@ struct MenuBarMenu: View {
     var body: some View {
         let c = model.controller
         Text(c.connected ? "\(c.device.name) connected" : "Kiyo not connected")
+        CameraPicker(model: model)
         if let release = updates.available {
             Button("Update Available: \(release.version.description)…") { updates.download() }
         }

@@ -22,10 +22,21 @@ public final class USBTransport: UVCTransport {
     private let device: IOUSBHostDevice
     private let interface: UInt8
 
-    public init?(vendorID: UInt16, productID: UInt16, interface: UInt8) {
+    public convenience init?(vendorID: UInt16, productID: UInt16, interface: UInt8) {
         let matching = IOServiceMatching("IOUSBHostDevice") as NSMutableDictionary
         matching["idVendor"] = Int(vendorID)
         matching["idProduct"] = Int(productID)
+        self.init(matching: matching, interface: interface)
+    }
+
+    /// Opens the camera on one USB port, so two cameras of the same model can be told apart.
+    public convenience init?(locationID: UInt32, interface: UInt8) {
+        let matching = IOServiceMatching("IOUSBHostDevice") as NSMutableDictionary
+        matching[kIOPropertyMatchKey] = ["locationID": Int(locationID)]
+        self.init(matching: matching, interface: interface)
+    }
+
+    private init?(matching: NSMutableDictionary, interface: UInt8) {
         let service = IOServiceGetMatchingService(kIOMainPortDefault, matching as CFDictionary)
         guard service != 0 else { return nil }
         defer { IOObjectRelease(service) }
@@ -60,21 +71,22 @@ public final class USBTransport: UVCTransport {
 public final class UVCCamera {
     private let transport: UVCTransport
     public let device: KiyoDevice
+    /// The USB port of the camera, or nil when not connected over USB (e.g. in tests).
+    public let locationID: UInt32?
 
-    public init(transport: UVCTransport, device: KiyoDevice = .proUltra) {
+    public init(transport: UVCTransport, device: KiyoDevice = .proUltra, locationID: UInt32? = nil) {
         self.transport = transport
         self.device = device
+        self.locationID = locationID
     }
 
-    /// Connects to a supported Kiyo over USB. Returns nil if none is plugged in.
-    public convenience init?() {
-        for device in KiyoDevice.all {
-            if let usb = USBTransport(vendorID: device.vendorID, productID: device.productID, interface: device.interface) {
-                self.init(transport: usb, device: device)
-                return
-            }
-        }
-        return nil
+    /// Connects to a supported Kiyo over USB: the one on the preferred port if it is plugged in,
+    /// otherwise the first one found. Returns nil if none is plugged in.
+    public convenience init?(preferring location: UInt32? = nil) {
+        guard let camera = CameraDiscovery.choose(CameraDiscovery.scan(), preferring: location),
+              let device = camera.device,
+              let usb = USBTransport(locationID: camera.locationID, interface: device.interface) else { return nil }
+        self.init(transport: usb, device: device, locationID: camera.locationID)
     }
 
     /// Controls are declared with the Pro Ultra's Processing Unit id. Other models use a different id, so we swap it here.

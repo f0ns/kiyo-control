@@ -33,4 +33,7 @@ public struct KiyoDevice: Sendable, Equatable {
         processingUnit: 2, razerCommands: false, firmwareUpdater: nil)
 
     public static let all: [KiyoDevice] = [proUltra, v2Pro, v2X]
+
+    /// Razer's USB vendor id. A Razer camera that is not in `all` is one the app does not support yet.
+    public static let razerVendorID: UInt16 = 0x1532
 }

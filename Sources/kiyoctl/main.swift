@@ -2,7 +2,8 @@ import Foundation
 import KiyoKit
 
 let usage = """
-usage: kiyoctl info                 show model, USB link and firmware version (Pro Ultra)
+usage: kiyoctl cameras              list USB cameras and whether they are supported
+       kiyoctl info                 show model, USB link and firmware version (Pro Ultra)
        kiyoctl list                 show every control with current value and range
        kiyoctl get <control>
        kiyoctl set <control> <value>
@@ -22,6 +23,21 @@ func fail(_ msg: String) -> Never {
 
 let args = Array(CommandLine.arguments.dropFirst())
 guard let cmd = args.first else { fail(usage) }
+
+// Works without a supported camera, so it can explain why the others are not found.
+if cmd == "cameras" {
+    let cameras = CameraDiscovery.scan()
+    if cameras.isEmpty { print("no USB cameras found") }
+    for c in cameras {
+        let status = switch c.status {
+        case .supported: "supported"
+        case .unsupportedRazer: "not supported yet: \(CameraDiscovery.supportRequestURL(for: c).absoluteString)"
+        case .other: "not a Kiyo"
+        }
+        print(c.name.padding(toLength: 24, withPad: " ", startingAt: 0), c.usbID, String(format: "0x%08X", c.locationID), c.link.name, " ", status)
+    }
+    exit(0)
+}
 guard let cam = UVCCamera() else { fail("no supported Kiyo found") }
 
 func control(_ id: String) -> UVCControl {
