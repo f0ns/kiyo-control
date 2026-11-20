@@ -24,14 +24,17 @@ struct ContentView: View {
             HStack(spacing: 0) {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
-                        switch tab {
-                        case .camera: CameraTab(model: model)
-                        case .processing: ProcessingTab(model: model)
-                        case .image: ImageTab(model: model)
+                        if !model.connected {
+                            NoCameraCard(model: model)
+                        } else {
+                            switch tab {
+                            case .camera: CameraTab(model: model)
+                            case .processing: ProcessingTab(model: model)
+                            case .image: ImageTab(model: model)
+                            }
                         }
                     }
                     .padding(.horizontal, 20)
-                    .disabled(!model.connected)
                 }
                 .frame(width: 340)
                 .background(Color.panel)
@@ -69,6 +72,11 @@ struct ContentView: View {
         .onAppear { preview.start() }
         // A replug (e.g. moving to a USB 3 port) can change the formats the camera offers.
         .onChange(of: model.connected) { _, connected in if connected { preview.reconnect() } }
+        // Another Kiyo was picked: show its picture. A first connect is handled by the line above.
+        .onChange(of: model.controller.cameraLocation) { old, new in
+            preview.preferredLocation = new
+            if old != nil, new != nil { preview.reconnect() }
+        }
         // Release the camera (and its light) when the window closes; the app stays in the menu bar.
         .onDisappear { preview.stop() }
     }
