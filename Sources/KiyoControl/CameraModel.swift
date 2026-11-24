@@ -60,7 +60,7 @@ final class CameraModel: ObservableObject {
         poll()
     }
 
-    /// Supported cameras plugged in right now; the switcher only shows when there are two or more.
+    /// Supported cameras plugged in right now.
     var supportedCameras: [USBCamera] { cameras.filter { $0.device != nil } }
 }
 

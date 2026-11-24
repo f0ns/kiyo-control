@@ -63,8 +63,8 @@ final class PreviewController: ObservableObject {
         let devices = AVCaptureDevice.DiscoverySession(
             deviceTypes: [.external], mediaType: .video, position: .unspecified).devices
         let kiyos = devices.filter { $0.localizedName.localizedCaseInsensitiveContains("Kiyo") }
-        // A USB camera's uniqueID is its locationID in hex followed by its 4+4 hex digit USB ids,
-        // e.g. 0x14100000 + 15320e08. Check the length too: 0x1100000 is also a prefix of 0x11000000.
+        // A USB camera's uniqueID is its locationID in hex followed by its vendor and product id,
+        // e.g. 0x14100000 15320e08. Not documented by Apple, so fall back to the first Kiyo.
         let preferred = preferredLocation.flatMap { location in
             let prefix = "0x" + String(location, radix: 16)
             return kiyos.first { $0.uniqueID.lowercased().hasPrefix(prefix) && $0.uniqueID.count == prefix.count + 8 }

@@ -70,17 +70,12 @@ struct ContentView: View {
         .ignoresSafeArea(edges: .top)
         .frame(minWidth: 1000, minHeight: 680)
         .onAppear { preview.start() }
-        // A replug (e.g. moving to a USB 3 port) can change the formats the camera offers.
-        .onChange(of: model.connected) { _, connected in
-            if connected {
-                preview.preferredLocation = model.controller.cameraLocation
-                preview.reconnect()
-            }
-        }
-        // Another Kiyo was picked: show its picture. A first connect is handled by the line above.
-        .onChange(of: model.controller.cameraLocation) { old, new in
-            preview.preferredLocation = new
-            if old != nil, new != nil { preview.reconnect() }
+        // On connect, replug (which can change the formats offered, e.g. on a USB 3 port) or a switch to
+        // another Kiyo, show the camera the settings control.
+        .onChange(of: model.controller.cameraLocation) { _, location in
+            guard let location else { return }
+            preview.preferredLocation = location
+            preview.reconnect()
         }
         // Release the camera (and its light) when the window closes; the app stays in the menu bar.
         .onDisappear { preview.stop() }

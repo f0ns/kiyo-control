@@ -13,14 +13,17 @@ public struct KiyoDevice: Sendable, Equatable {
     /// Razer's firmware updater page (Windows only). Nil hides the firmware version and link in the
     /// app: only the Pro Ultra's is supported. The app itself never updates firmware.
     public let firmwareUpdater: URL?
-    /// True if the camera can stream 4K. The "plug into USB 3 for 4K" hint only makes sense for these.
+    /// True if the camera can stream 4K. The "plug into USB 3 for 4K" hint only makes sense for these:
+    /// the 1080p models lose nothing on USB 2, and the V2 X is a USB 2 device anyway.
     public let supports4K: Bool
 
-    /// Controls used with this model: without Razer's ISO and shutter commands, manual exposure uses
-    /// the standard UVC exposure time and gain controls.
-    public var controls: [UVCControl] {
-        KiyoProUltra.all + (razerCommands ? [] : [KiyoProUltra.exposureTime, KiyoProUltra.gain])
+    /// Without Razer's ISO and shutter commands, manual exposure uses the standard UVC exposure time and gain.
+    public var exposureControls: [UVCControl] {
+        razerCommands ? [] : [KiyoProUltra.exposureTime, KiyoProUltra.gain]
     }
+
+    /// Every control used with this model.
+    public var controls: [UVCControl] { KiyoProUltra.all + exposureControls }
 
     public init(name: String, vendorID: UInt16, productID: UInt16, interface: UInt8, processingUnit: UInt8,
                 razerCommands: Bool, firmwareUpdater: URL?, supports4K: Bool = true) {

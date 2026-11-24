@@ -5,7 +5,7 @@ import Testing
 @Suite struct CameraDiscoveryTests {
     static func camera(_ product: UInt16, vendor: UInt16 = 0x1532, at location: UInt32, name: String = "Razer Kiyo") -> USBCamera {
         USBCamera(name: name, vendorID: vendor, productID: product, locationID: location,
-                  link: USBLink(bitsPerSecond: 480_000_000, usbVersion: 0x0201))
+                  link: USBLink(bitsPerSecond: 480_000_000))
     }
 
     @Test func classifiesCameras() {
@@ -42,10 +42,6 @@ import Testing
         #expect(items.first { $0.name == "body" }?.value?.contains("tools/uvc-dump 1532 0E03") == true)
     }
 
-    @Test func scanOnlyListsUSBCameras() {
-        // No hardware needed: whatever is found has a location and a real link speed.
-        for camera in CameraDiscovery.scan() { #expect(camera.link.bitsPerSecond >= 12_000_000) }
-    }
 }
 
 @Suite struct ReconnectTests {

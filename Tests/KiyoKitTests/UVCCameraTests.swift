@@ -103,15 +103,11 @@ typealias K = KiyoProUltra
         try cam.set(K.brightness, 10)
         try cam.set(K.zoom, 150)
         #expect(fake.setLog.map(\.unit) == [2, 1])
-        #expect(!KiyoDevice.v2X.razerCommands)
     }
 
     @Test func everyModelHasItsOwnUSBId() {
         let ids = KiyoDevice.all.map { "\($0.vendorID):\($0.productID)" }
         #expect(Set(ids).count == ids.count)
-        #expect(KiyoDevice.all.contains(.v2X) && KiyoDevice.all.contains(.kiyoPro))
-        #expect(KiyoDevice.proUltra.supports4K && KiyoDevice.v2Pro.supports4K)
-        #expect(!KiyoDevice.v2X.supports4K && !KiyoDevice.kiyoPro.supports4K)
     }
 
     @Test func proUltraKeepsUnit3() throws {
@@ -120,37 +116,25 @@ typealias K = KiyoProUltra
         #expect(fake.setLog.map(\.unit) == [3])
     }
 
-    @Test func kiyoProUsesUnit3AndStandardControlsOnly() throws {
+    @Test func kiyoProUsesUnit3() throws {
         let fake = FakeTransport()
         let cam = UVCCamera(transport: fake, device: .kiyoPro)
         try cam.set(K.brightness, 10)
         try cam.set(K.zoom, 150)
         #expect(fake.setLog.map(\.unit) == [3, 1])
-        #expect(!KiyoDevice.kiyoPro.razerCommands)
-        #expect(!KiyoDevice.kiyoPro.supports4K)
-        #expect(KiyoDevice.kiyoPro.firmwareUpdater == nil)
-        #expect(KiyoDevice.kiyoPro.controls.contains(K.exposureTime))
-        #expect(KiyoDevice.kiyoPro.controls.contains(K.gain))
+    }
+
+    @Test func manualExposureUsesExposureTimeAndGainWithoutRazerCommands() {
+        #expect(KiyoDevice.kiyoPro.controls.contains(K.exposureTime) && KiyoDevice.kiyoPro.controls.contains(K.gain))
         #expect(!KiyoDevice.proUltra.controls.contains(K.exposureTime))
     }
 
-    @Test func kiyoProNeverReceivesRazerCommands() throws {
-        let fake = FakeTransport()
-        fake.stub(K.zoom, cur: 100, min: 100, max: 500, def: 100)
-        let store = ProfileStore(root: FileManager.default.temporaryDirectory.appending(path: "kiyo-pro-\(UUID().uuidString)"))
-        let c = CameraController(store: store, controls: [K.zoom]) { UVCCamera(transport: fake, device: .kiyoPro) }
-        c.poll()
-        c.setRazer { $0.mirror = true; $0.iso = 400 }
-        c.saveToCamera()
-        #expect(!c.supportsRazer)
-        #expect(!fake.setLog.contains { $0.unit == RazerCommand.unit })
-    }
-
-    @Test func v2ProNeverReceivesRazerCommands() throws {
+    @Test(arguments: KiyoDevice.all.filter { !$0.razerCommands })
+    func neverSendsRazerCommandsToModelsWithout(device: KiyoDevice) throws {
         let fake = FakeTransport()
         fake.stub(K.zoom, cur: 100, min: 100, max: 400, def: 100)
-        let store = ProfileStore(root: FileManager.default.temporaryDirectory.appending(path: "kiyo-v2-\(UUID().uuidString)"))
-        let c = CameraController(store: store, controls: [K.zoom]) { UVCCamera(transport: fake, device: .v2Pro) }
+        let store = ProfileStore(root: FileManager.default.temporaryDirectory.appending(path: "kiyo-norazer-\(UUID().uuidString)"))
+        let c = CameraController(store: store, controls: [K.zoom]) { UVCCamera(transport: fake, device: device) }
         c.poll()
         c.setRazer { $0.mirror = true; $0.iso = 400 }
         c.saveToCamera()

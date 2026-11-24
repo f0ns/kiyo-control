@@ -61,16 +61,16 @@ date, run Razer's updater: it tells you.
 The **Kiyo V2 Pro** (USB 1532:0E0A) only supports the standard controls, plus shutter speed and gain in manual
 exposure. The Razer commands (ISO, metering, mirror, noise reduction, lens correction…) are hidden,
 because nobody has documented this camera's extension unit. The app sends nothing to it.
-The V2 Pro support is community-tested: it was added by a V2 Pro owner and has not been tested by the maintainer.
 
 The **Kiyo V2 X** (USB 1532:0E0C) works the same way as the V2 Pro: standard controls, plus shutter speed and gain in
-manual exposure, and no Razer commands. It is a USB 2 camera, so the app shows no USB 3 hint for it.
-The V2 X support is community-tested too.
+manual exposure, and no Razer commands. It is a 1080p USB 2 camera, so the app shows no USB 3 hint for it.
 
 The original **Kiyo Pro** (USB 1532:0E05) works the same way: standard controls, plus shutter speed and gain in
 manual exposure. Its extension units differ from the Pro Ultra's and are not documented, so the Razer commands are
 hidden and nothing is sent to them. It is a 1080p camera, so the "USB 3 for 4K" hint is not shown.
-The Kiyo Pro support is community-tested on firmware 8.21; it has not been tested by the maintainer.
+
+Support for the V2 Pro, V2 X and Kiyo Pro was added and tested by owners of those cameras (the Kiyo Pro on firmware
+8.21); the maintainer has only tested the Pro Ultra.
 
 ## Install
 

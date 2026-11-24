@@ -56,7 +56,7 @@ func ranges() -> [String: UVCRange] {
 
 switch cmd {
 case "info":
-    let link = USBLink.current()
+    let link = CameraDiscovery.scan().first { $0.locationID == cam.locationID }?.link
     print("model     \(cam.device.name)")
     print("usb       \(link?.name ?? "unknown")")
     if cam.device.firmwareUpdater != nil { print("firmware  \(link?.firmware ?? "unknown")") }

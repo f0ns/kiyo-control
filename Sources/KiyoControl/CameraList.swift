@@ -52,7 +52,7 @@ private struct CameraRow: View {
             Spacer()
             if isConnected {
                 Text("Connected").foregroundStyle(Color.accentGreen)
-            } else if camera.device != nil, model.connected || !isChosen {
+            } else if canSwitch {
                 Button("Use") { model.select(camera) }
             }
         }
@@ -60,6 +60,9 @@ private struct CameraRow: View {
     }
 
     private var isConnected: Bool { model.connected && camera.locationID == model.controller.cameraLocation }
+
+    /// While disconnected, the chosen camera is the one not responding: "Use" would only retry it.
+    private var canSwitch: Bool { camera.device != nil && (model.connected || !isChosen) }
 
     /// The camera the app tries to connect to when it isn't connected.
     private var isChosen: Bool {
@@ -69,7 +72,7 @@ private struct CameraRow: View {
     private var detail: String {
         switch camera.status {
         case .supported:
-            if isConnected || model.connected { return "\(camera.usbID) · \(camera.link.name)" }
+            if model.connected { return "\(camera.usbID) · \(camera.link.name)" }
             return isChosen ? "Not responding. Unplug it and plug it back in." : camera.usbID
         case .unsupportedRazer: return "\(camera.usbID) · not supported yet"
         case .other: return "Not a Kiyo"

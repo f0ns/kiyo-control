@@ -94,11 +94,9 @@ public enum CameraDiscovery {
         return c.url!
     }
 
-    /// Link speed, firmware and USB version, as the IO registry reports them.
     static func link(_ service: io_service_t) -> USBLink {
         USBLink(bitsPerSecond: number(service, "UsbLinkSpeed")?.intValue ?? 0,
-                firmware: number(service, "bcdDevice").map { USBLink.firmwareVersion(bcd: $0.intValue) },
-                usbVersion: number(service, "bcdUSB")?.intValue)
+                firmware: number(service, "bcdDevice").map { USBLink.firmwareVersion(bcd: $0.intValue) })
     }
 
     private static func number(_ service: io_service_t, _ key: String) -> NSNumber? {
