@@ -4,10 +4,20 @@ import SwiftUI
 /// SwiftUI wrapper around CameraController: forwards calls and publishes changes.
 @MainActor
 final class CameraModel: ObservableObject {
-    let controller = CameraController(store: ProfileStore())
-    /// The camera's USB connection; on USB 2 it offers no 4K.
-    private(set) var link: USBLink?
+    let controller = CameraController(store: ProfileStore()) {
+        UVCCamera(preferring: CameraModel.preferredLocation)
+    }
+    /// Every USB camera plugged in, supported or not, for the camera list.
+    private(set) var cameras: [USBCamera] = []
+    /// The connected camera's USB connection; on USB 2 it offers no 4K.
+    var link: USBLink? { cameras.first { $0.locationID == controller.cameraLocation }?.link }
     private var pollTimer: Timer?
+    nonisolated private static let preferredKey = "preferredCamera"
+
+    /// USB port of the camera the user picked last; nil means the first supported one.
+    nonisolated static var preferredLocation: UInt32? {
+        (UserDefaults.standard.object(forKey: preferredKey) as? NSNumber)?.uint32Value
+    }
 
     init() {
         poll()
@@ -31,15 +41,27 @@ final class CameraModel: ObservableObject {
         return action(controller)
     }
 
-    /// Redraws only when the connection changes, not on every 2-second check.
+    /// Redraws only when the connection or the list of cameras changes, not on every 2-second check.
     func poll() {
         let wasConnected = controller.connected
         controller.poll()
-        if controller.connected != wasConnected || (controller.connected && link == nil) {
-            link = controller.connected ? USBLink.current() : nil
+        let found = CameraDiscovery.scan()
+        if controller.connected != wasConnected || found != cameras {
             objectWillChange.send()
+            cameras = found
         }
     }
+
+    /// Switches to another supported camera and remembers the choice.
+    func select(_ camera: USBCamera) {
+        guard camera.device != nil, camera.locationID != controller.cameraLocation else { return }
+        UserDefaults.standard.set(camera.locationID, forKey: Self.preferredKey)
+        perform { $0.reconnect() }
+        poll()
+    }
+
+    /// Supported cameras plugged in right now; the switcher only shows when there are two or more.
+    var supportedCameras: [USBCamera] { cameras.filter { $0.device != nil } }
 }
 
 extension CameraModel {

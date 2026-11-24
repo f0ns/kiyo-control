@@ -35,6 +35,7 @@ struct TopBar: View {
                 }
                 .disabled(c.backups.isEmpty || !c.connected)
                 Button("Show Backups in Finder") { model.revealBackups() }
+                CameraPicker(model: model)
                 if let updater = c.device.firmwareUpdater {
                     Divider()
                     Text("Firmware \(model.link?.firmware ?? "unknown")")

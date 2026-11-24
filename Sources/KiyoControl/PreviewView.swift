@@ -17,6 +17,8 @@ final class PreviewController: ObservableObject {
     private var configured = false
     private var device: AVCaptureDevice?
     private static let modeKey = "previewMode"
+    /// USB port of the camera the settings control, so the preview shows the same one when several Kiyos are plugged in.
+    var preferredLocation: UInt32?
 
     func start() {
         AVCaptureDevice.requestAccess(for: .video) { granted in
@@ -60,7 +62,12 @@ final class PreviewController: ObservableObject {
     private func configure() {
         let devices = AVCaptureDevice.DiscoverySession(
             deviceTypes: [.external], mediaType: .video, position: .unspecified).devices
-        guard let device = devices.first(where: { $0.localizedName.localizedCaseInsensitiveContains("Kiyo") }) else {
+        let kiyos = devices.filter { $0.localizedName.localizedCaseInsensitiveContains("Kiyo") }
+        // A USB camera's uniqueID starts with its locationID in hex, e.g. 0x1400000 followed by its USB ids.
+        let preferred = preferredLocation.flatMap { location in
+            kiyos.first { $0.uniqueID.lowercased().hasPrefix("0x" + String(location, radix: 16)) }
+        }
+        guard let device = preferred ?? kiyos.first else {
             status = "Kiyo not found"
             return
         }

@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Kiyo V2 X (1532:0E0C) support for standard UVC controls; Razer-only settings are hidden. Community-tested.
+- The USB 2 hint only shows for cameras that support USB 3, not for USB 2 cameras such as the Kiyo V2 X.
+- Camera list: "Connect your Kiyo" now opens a list of the USB cameras plugged in, with why each can or can't be
+  used, and the settings panel shows the same list while disconnected. Unsupported Razer cameras link to a prefilled
+  GitHub issue. With several Kiyos plugged in, pick one in the ⋯ menu or the menu bar menu; the preview follows.
+- `kiyoctl cameras` lists USB cameras and whether they are supported.
+
 ## 0.5.0
 
 - Kiyo Pro Ultra: the ⋯ menu shows the camera's firmware version and links to Razer's firmware updater (Windows

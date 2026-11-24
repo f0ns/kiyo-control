@@ -5,7 +5,7 @@
 <h1 align="center">Kiyo Control</h1>
 
 <p align="center">
-  Camera settings for the <b>Razer Kiyo Pro Ultra</b> and <b>Kiyo V2 Pro</b> on macOS — the controls Razer Synapse offers on Windows but not on Mac.
+  Camera settings for the <b>Razer Kiyo Pro Ultra</b>, <b>Kiyo V2 Pro</b> and <b>Kiyo V2 X</b> on macOS — the controls Razer Synapse offers on Windows but not on Mac.
 </p>
 
 <p align="center">
@@ -37,6 +37,9 @@
   Custom, in Zoom under Settings › Video › HD.
 - Tells you when a new version is out.
 - Shows the camera's firmware version in the `…` menu (`kiyoctl info` prints it too). Kiyo Pro Ultra only.
+- Camera list: when no Kiyo is connected, the window lists the USB cameras it sees and why it can't use them
+  (not responding, a Razer model not supported yet, not a Kiyo). With two Kiyos plugged in, pick one in the `…` menu
+  or the menu bar menu.
 
 ### Firmware updates: not supported
 
@@ -60,9 +63,13 @@ exposure. The Razer commands (ISO, metering, mirror, noise reduction, lens corre
 because nobody has documented this camera's extension unit. The app sends nothing to it.
 The V2 Pro support is community-tested: it was added by a V2 Pro owner and has not been tested by the maintainer.
 
+The **Kiyo V2 X** (USB 1532:0E0C) works the same way as the V2 Pro: standard controls, plus shutter speed and gain in
+manual exposure, and no Razer commands. It is a USB 2 camera, so the app shows no USB 3 hint for it.
+The V2 X support is community-tested too.
+
 ## Install
 
-You need a Mac with macOS 15 (Sequoia) or newer and a Razer Kiyo Pro Ultra or Kiyo V2 Pro.
+You need a Mac with macOS 15 (Sequoia) or newer and a Razer Kiyo Pro Ultra, Kiyo V2 Pro or Kiyo V2 X.
 
 ### Easiest: one line
 
@@ -103,6 +110,8 @@ That's it. Plug in the camera and the settings appear.
 - Closing the window keeps KiyoControl running in the **menu bar** (the camera icon at the top of
   the screen), so your settings come back whenever you plug the camera in.
 - Want it to start automatically? Click the menu bar icon and turn on **Launch at Login**.
+- Settings greyed out? Click the camera status at the bottom left (**Connect your Kiyo**) to see which
+  cameras the app found. An unsupported Razer camera has a **Help add it** link that opens a prefilled GitHub issue.
 - Made a mess? Click **Reset All Settings**, or the **⋯** button › **Restore Backup**.
 - New version out? A banner at the top of the window tells you. The app asks GitHub once a day
   (nothing about you or your camera is sent); turn it off in the menu bar menu under
@@ -137,6 +146,7 @@ scripts/smoke.sh 1 60 KIYO_MODE_CYCLE=1  # switches the preview through every re
 
 ```sh
 swift build --product kiyoctl
+.build/debug/kiyoctl cameras            # USB cameras and whether they are supported
 .build/debug/kiyoctl info               # model, USB link, firmware version
 .build/debug/kiyoctl list               # every control with value and range
 .build/debug/kiyoctl set zoom 200       # 2.0x
