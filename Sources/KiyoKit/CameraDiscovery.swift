@@ -23,7 +23,7 @@ public struct USBCamera: Equatable, Sendable, Identifiable {
 
     public enum Status: Equatable, Sendable {
         case supported(KiyoDevice)
-        /// A Razer camera without a known control map, e.g. the Kiyo Pro or the original Kiyo.
+        /// A Razer camera without a known control map, e.g. the original Kiyo.
         case unsupportedRazer
         case other
     }

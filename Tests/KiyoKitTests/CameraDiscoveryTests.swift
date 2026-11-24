@@ -11,9 +11,9 @@ import Testing
     @Test func classifiesCameras() {
         #expect(Self.camera(0x0E0C, at: 1).status == .supported(.v2X))
         #expect(Self.camera(0x0E08, at: 1).status == .supported(.proUltra))
-        #expect(Self.camera(0x0E05, at: 1).status == .unsupportedRazer)
+        #expect(Self.camera(0x0E03, at: 1).status == .unsupportedRazer)
         #expect(Self.camera(0x085C, vendor: 0x046D, at: 1).status == .other)
-        #expect(Self.camera(0x0E05, at: 1).device == nil)
+        #expect(Self.camera(0x0E03, at: 1).device == nil)
     }
 
     @Test func formatsTheUSBId() {
@@ -21,7 +21,7 @@ import Testing
     }
 
     @Test func choosesThePreferredSupportedCamera() {
-        let cams = [Self.camera(0x0E05, at: 1), Self.camera(0x0E08, at: 2), Self.camera(0x0E0C, at: 3)]
+        let cams = [Self.camera(0x0E03, at: 1), Self.camera(0x0E08, at: 2), Self.camera(0x0E0C, at: 3)]
         #expect(CameraDiscovery.choose(cams, preferring: 3)?.locationID == 3)
         // Unplugged or unsupported preference: the first supported camera.
         #expect(CameraDiscovery.choose(cams, preferring: 9)?.locationID == 2)
@@ -30,16 +30,16 @@ import Testing
     }
 
     @Test func choosesNothingWithoutASupportedCamera() {
-        #expect(CameraDiscovery.choose([Self.camera(0x0E05, at: 1)], preferring: 1) == nil)
+        #expect(CameraDiscovery.choose([Self.camera(0x0E03, at: 1)], preferring: 1) == nil)
         #expect(CameraDiscovery.choose([], preferring: nil) == nil)
     }
 
     @Test func supportRequestNamesTheCamera() throws {
-        let url = CameraDiscovery.supportRequestURL(for: Self.camera(0x0E05, at: 1, name: "Razer Kiyo Pro"))
+        let url = CameraDiscovery.supportRequestURL(for: Self.camera(0x0E03, at: 1, name: "Razer Kiyo"))
         let items = try #require(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems)
         #expect(url.host == "github.com")
-        #expect(items.first { $0.name == "title" }?.value == "Support Razer Kiyo Pro (1532:0E05)")
-        #expect(items.first { $0.name == "body" }?.value?.contains("tools/uvc-dump 1532 0E05") == true)
+        #expect(items.first { $0.name == "title" }?.value == "Support Razer Kiyo (1532:0E03)")
+        #expect(items.first { $0.name == "body" }?.value?.contains("tools/uvc-dump 1532 0E03") == true)
     }
 
     @Test func scanOnlyListsUSBCameras() {

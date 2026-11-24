@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Kiyo Pro (1532:0E05) support for standard UVC controls; Razer-only settings are hidden, and the
+  "USB 3 for 4K" hint is not shown for this 1080p camera. Community-tested.
 - Kiyo V2 X (1532:0E0C) support for standard UVC controls; Razer-only settings are hidden. Community-tested.
 - The USB 2 hint only shows for cameras that support USB 3, not for USB 2 cameras such as the Kiyo V2 X.
 - Camera list: "Connect your Kiyo" now opens a list of the USB cameras plugged in, with why each can or can't be

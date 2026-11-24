@@ -13,6 +13,26 @@ public struct KiyoDevice: Sendable, Equatable {
     /// Razer's firmware updater page (Windows only). Nil hides the firmware version and link in the
     /// app: only the Pro Ultra's is supported. The app itself never updates firmware.
     public let firmwareUpdater: URL?
+    /// True if the camera can stream 4K. The "plug into USB 3 for 4K" hint only makes sense for these.
+    public let supports4K: Bool
+
+    /// Controls used with this model: without Razer's ISO and shutter commands, manual exposure uses
+    /// the standard UVC exposure time and gain controls.
+    public var controls: [UVCControl] {
+        KiyoProUltra.all + (razerCommands ? [] : [KiyoProUltra.exposureTime, KiyoProUltra.gain])
+    }
+
+    public init(name: String, vendorID: UInt16, productID: UInt16, interface: UInt8, processingUnit: UInt8,
+                razerCommands: Bool, firmwareUpdater: URL?, supports4K: Bool = true) {
+        self.name = name
+        self.vendorID = vendorID
+        self.productID = productID
+        self.interface = interface
+        self.processingUnit = processingUnit
+        self.razerCommands = razerCommands
+        self.firmwareUpdater = firmwareUpdater
+        self.supports4K = supports4K
+    }
 
     /// Kiyo Pro Ultra, USB 1532:0E08.
     public static let proUltra = KiyoDevice(
@@ -30,9 +50,17 @@ public struct KiyoDevice: Sendable, Equatable {
     /// Its extension units are not documented, so the app only supports the standard UVC controls.
     public static let v2X = KiyoDevice(
         name: "Kiyo V2 X", vendorID: 0x1532, productID: 0x0E0C, interface: 0,
-        processingUnit: 2, razerCommands: false, firmwareUpdater: nil)
+        processingUnit: 2, razerCommands: false, firmwareUpdater: nil, supports4K: false)
 
-    public static let all: [KiyoDevice] = [proUltra, v2Pro, v2X]
+    /// Kiyo Pro (the original 1080p model), USB 1532:0E05. Same unit ids as the Pro Ultra: Camera
+    /// Terminal 1, Processing Unit 3, VideoControl interface 0. Its two extension units (GUIDs
+    /// 2c49d16a-32b8-4485-3ea8-643a152362f2 and 23e49ed0-1178-4f31-ae52-d2fb8a8d3b48) differ from the
+    /// Pro Ultra's and are not documented, so the app only supports the standard UVC controls.
+    public static let kiyoPro = KiyoDevice(
+        name: "Kiyo Pro", vendorID: 0x1532, productID: 0x0E05, interface: 0,
+        processingUnit: 3, razerCommands: false, firmwareUpdater: nil, supports4K: false)
+
+    public static let all: [KiyoDevice] = [proUltra, v2Pro, v2X, kiyoPro]
 
     /// Razer's USB vendor id. A Razer camera that is not in `all` is one the app does not support yet.
     public static let razerVendorID: UInt16 = 0x1532

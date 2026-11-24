@@ -5,7 +5,7 @@
 <h1 align="center">Kiyo Control</h1>
 
 <p align="center">
-  Camera settings for the <b>Razer Kiyo Pro Ultra</b>, <b>Kiyo V2 Pro</b> and <b>Kiyo V2 X</b> on macOS — the controls Razer Synapse offers on Windows but not on Mac.
+  Camera settings for the <b>Razer Kiyo Pro Ultra</b>, <b>Kiyo V2 Pro</b>, <b>Kiyo V2 X</b> and <b>Kiyo Pro</b> on macOS — the controls Razer Synapse offers on Windows but not on Mac.
 </p>
 
 <p align="center">
@@ -67,9 +67,14 @@ The **Kiyo V2 X** (USB 1532:0E0C) works the same way as the V2 Pro: standard con
 manual exposure, and no Razer commands. It is a USB 2 camera, so the app shows no USB 3 hint for it.
 The V2 X support is community-tested too.
 
+The original **Kiyo Pro** (USB 1532:0E05) works the same way: standard controls, plus shutter speed and gain in
+manual exposure. Its extension units differ from the Pro Ultra's and are not documented, so the Razer commands are
+hidden and nothing is sent to them. It is a 1080p camera, so the "USB 3 for 4K" hint is not shown.
+The Kiyo Pro support is community-tested on firmware 8.21; it has not been tested by the maintainer.
+
 ## Install
 
-You need a Mac with macOS 15 (Sequoia) or newer and a Razer Kiyo Pro Ultra, Kiyo V2 Pro or Kiyo V2 X.
+You need a Mac with macOS 15 (Sequoia) or newer and a Razer Kiyo Pro Ultra, Kiyo V2 Pro, Kiyo V2 X or Kiyo Pro.
 
 ### Easiest: one line
 
